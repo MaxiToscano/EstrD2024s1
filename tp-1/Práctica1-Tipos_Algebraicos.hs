@@ -50,7 +50,7 @@ sumar 3 (sucesor 1) + maxDelPar (divisionYResto 10 2)
 --EJERCICIO 3: Tipos enumerativos
 
 
---1. Definir el tipo de dato Dir, con las alternativas Norte, Sur, Este y Oeste. 
+--Punto1. Definir el tipo de dato Dir, con las alternativas Norte, Sur, Este y Oeste. 
 
 data Dir = Norte | Sur | Este | Oeste
     deriving Show
@@ -91,7 +91,7 @@ siguiente Oeste = error "No existe siguiente direccion a Oeste"
 {-Es una función parcial ya que puede fallar en el caso de la opción Oeste, la cual no posee 
 siguiente dirección en este modelo y por este motivo posee una precondición-}
 
-{-2. Definir el tipo de dato DiaDeSemana, con las alternativas Lunes, Martes, Miércoles, Jueves,
+{-Punto2. Definir el tipo de dato DiaDeSemana, con las alternativas Lunes, Martes, Miércoles, Jueves,
 Viernes, Sabado y Domingo. Supongamos que el primer día de la semana es lunes, y el último
 es domingo.-} 
 
@@ -140,11 +140,46 @@ ordenDia Domingo = 7
 --d) 
 estaEnElMedio :: DiaDeSemana -> Bool
 --Dado un día de la semana indica si no es ni el primer ni el ultimo dia.
-{-estaEnElMedio primerDia = False
-estaEnElMedio ultimoDia = False
-estaEnElMedio _ = True-}
 
 estaEnElMedio Lunes = False
 estaEnElMedio Domingo = False
 estaEnElMedio _ = True
 
+
+{-Punto3. Los booleanos también son un tipo de enumerativo. Un booleano es True o False. Defina
+las siguientes funciones utilizando pattern matching (no usar las funciones sobre booleanos
+ya definidas en Haskell):-}
+
+--a) 
+negar :: Bool -> Bool
+{-Dado un booleano, si es True devuelve False, y si es False devuelve True.
+En Haskell ya está definida como not.-}
+negar True = False
+negar False = True
+
+
+--b) 
+implica :: Bool -> Bool -> Bool
+{-Dados dos booleanos, si el primero es True y el segundo es False, devuelve False, sino
+devuelve True.-}
+implica True False = False
+implica _ _ = True
+{-Esta función NO debe realizar doble pattern matching.
+Nota: no viene implementada en Haskell.-}
+
+
+--c) 
+yTambien :: Bool -> Bool -> Bool
+{-Dados dos booleanos si ambos son True devuelve True, sino devuelve False.
+Esta función NO debe realizar doble pattern matching.
+En Haskell ya está definida como \&\&.-}
+yTambien True True = True
+yTambien _ _ = False
+
+--d) 
+oBien :: Bool -> Bool -> Bool
+{-Dados dos booleanos si alguno de ellos es True devuelve True, sino devuelve False.
+Esta función NO debe realizar doble pattern matching.
+En Haskell ya está definida como ||.-}
+oBien False False = False
+oBien _ _ = True
