@@ -194,7 +194,7 @@ oBien _ _ = True
 
 --EJERCICIO 4: Registros
 
---1. Definir el tipo de dato Persona, como un nombre y la edad de la persona. 
+--Punto 1: Definir el tipo de dato Persona, como un nombre y la edad de la persona. 
 --Realizar las siguientes funciones:
 
 data Persona = P String Int
@@ -239,7 +239,7 @@ laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2
 
 -- //////////////////////////////////////////////////////////////////////////////////////////
 
-{-2. Definir los tipos de datos Pokemon, como un TipoDePokemon (agua, fuego o planta) y un
+{-Punto 2: Definir los tipos de datos Pokemon, como un TipoDePokemon (agua, fuego o planta) y un
 porcentaje de energía; y Entrenador, como un nombre y dos Pokémon. -}
 
 data Pokemon = PM TipoDePokemon Int 
