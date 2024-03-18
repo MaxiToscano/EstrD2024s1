@@ -322,7 +322,7 @@ pokemonesDe (E _ pm1 pm2) = [pm1, pm2]
 -- EJERCICIO 5: Funciones polimórficas
 
 
---1. Defina las siguientes funciones polimórficas:
+--Punto 1: Defina las siguientes funciones polimórficas:
 
 --a) 
 loMismo :: a -> a
@@ -343,7 +343,7 @@ swap (x, y) = (y, x)
 {-Las variables son de tipo diferente porque se pueden pasar datos de diferentes tipos y
 asi la función pueda diferenciarlas y cumplir su propósito-}
 
---2. Responda la siguiente pregunta: ¿Por qué estas funciones son polimórficas?
+--Punto 2: Responda la siguiente pregunta: ¿Por qué estas funciones son polimórficas?
 
 {-Son polimóficas porque funcionan con cualquier tipo de datos, osea que los elementos no 
 están restringidos, lo que las hacen funciones genéricas al no importar los datos con los
@@ -378,7 +378,6 @@ elPrimero :: [a] -> a
 elPrimero (x:_) = x
 elPrimero [] = error "Es una lista vacia" 
 --Definida en Haskell como head.
-
 
 
 --c)
