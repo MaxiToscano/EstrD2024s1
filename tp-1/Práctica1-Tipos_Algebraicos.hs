@@ -168,8 +168,8 @@ negar False = True
 implica :: Bool -> Bool -> Bool
 {-Dados dos booleanos, si el primero es True y el segundo es False, devuelve False, sino
 devuelve True.-}
-implica True False = False
-implica _ _ = True
+implica False _ = True
+implica _     b = b
 {-Esta función NO debe realizar doble pattern matching.
 Nota: no viene implementada en Haskell.-}
 
@@ -179,16 +179,16 @@ yTambien :: Bool -> Bool -> Bool
 {-Dados dos booleanos si ambos son True devuelve True, sino devuelve False.
 Esta función NO debe realizar doble pattern matching.
 En Haskell ya está definida como \&\&.-}
-yTambien True True = True
-yTambien _ _ = False
+yTambien False _ = False
+yTambien _     b = b
 
 --d) 
 oBien :: Bool -> Bool -> Bool
 {-Dados dos booleanos si alguno de ellos es True devuelve True, sino devuelve False.
 Esta función NO debe realizar doble pattern matching.
 En Haskell ya está definida como ||.-}
-oBien False False = False
-oBien _ _ = True
+oBien True _ = True 
+oBien _    b = b
 
 -- //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -317,6 +317,7 @@ pokemonesDe :: Entrenador -> [Pokemon]
 --dado un entrenador devuelve una lista con sus pokemones
 pokemonesDe (E _ pm1 pm2) = [pm1, pm2]
 
+
 -- //////////////////////////////////////////////////////////////////////////////////////////
 
 -- EJERCICIO 5: Funciones polimórficas
@@ -395,6 +396,6 @@ splitHead :: [a] -> (a, [a])
 lista, y el segundo componente es esa lista pero sin el primero.-}
 --PRECOND: la lista no está vacía.
 splitHead l = (elPrimero l, sinElPrimero l)
-splitHead _ = error "Es una lista vacia"
+splitHead [] = error "Es una lista vacia"
 
 
