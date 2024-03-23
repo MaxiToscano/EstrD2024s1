@@ -4,12 +4,9 @@
 sucesor :: Int -> Int 
 sucesor n = n+1
 
-yTambien :: Bool -> Bool -> Bool
-{-Dados dos booleanos si ambos son True devuelve True, sino devuelve False.
-Esta función NO debe realizar doble pattern matching.
-En Haskell ya está definida como \&\&.-}
-yTambien True True = True
-yTambien _ _ = False
+daUnoSiCumple :: Bool -> Int 
+daUnoSiCumple True = 1
+daUnoSiCumple _ = 0
 
 -- PUNTO 1: Recursión sobre listas
 
@@ -45,19 +42,51 @@ disyuncion :: [Bool] -> Bool
 disyuncion [] = False --la base tiene que False porque sino daría True cuando termine la recursión aunque todos los elementos sean False
 disyuncion (b:bs) = b || disyuncion bs
 
-{-6. aplanar :: [[a]] -> [a]
-Dada una lista de listas, devuelve una única lista con todos sus elementos.
-7. pertenece :: Eq a => a -> [a] -> Bool
-Dados un elemento e y una lista xs devuelve True si existe un elemento en xs que sea igual
-a e.
-8. apariciones :: Eq a => a -> [a] -> Int
-Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
-9. losMenoresA :: Int -> [Int] -> [Int]
-Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
-10. lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
-Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más
-de n elementos.
-11. agregarAlFinal :: [a] -> a -> [a]
+--6. 
+aplanar :: [[a]] -> [a]
+--Dada una lista de listas, devuelve una única lista con todos sus elementos.
+aplanar [] = []
+aplanar (l:ls) = l ++ aplanar ls 
+
+
+--7. 
+pertenece :: Eq a => a -> [a] -> Bool
+--Dados un elemento e y una lista xs devuelve True si existe un elemento en xs que sea igual a e.
+pertenece e [] = False
+pertenece e (x:xs) = e == x || pertenece e xs
+
+--8. 
+{-apariciones :: Eq a => a -> [a] -> Int
+--Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
+apariciones e [] = 0
+aparaciones e (x:xs) = daUnoSiCumple (e == x) + apariciones e xs-}
+
+--DUDA: no me sale con la subtarea
+
+apariciones :: Eq a => a -> [a] -> Int
+apariciones e []     = 0
+apariciones e (x:xs) = if e == x
+                        then 1 + apariciones e xs
+                        else apariciones e xs
+
+--9. 
+losMenoresA :: Int -> [Int] -> [Int]
+--Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
+losMenoresA n [] = []
+losMenoresA n (x:xs) = if x < n 
+                        then x : losMenoresA n xs
+                        else losMenoresA n xs
+
+
+--10. 
+lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
+--Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más de n elementos.
+lasDeLongitudMayorA n [] = []
+lasDeLongitudMayorA n (x:xs) = if (length x) > n
+                                then x : lasDeLongitudMayorA n xs
+                                else lasDeLongitudMayorA n xs
+
+{-11. agregarAlFinal :: [a] -> a -> [a]
 Dados una lista y un elemento, devuelve una lista con ese elemento agregado al nal de la
 lista.
 12. agregar :: [a] -> [a] -> [a]
