@@ -8,10 +8,6 @@ daUnoSiCumple :: Bool -> Int
 daUnoSiCumple True = 1
 daUnoSiCumple _ = 0
 
-agregarSi :: a -> Bool -> [a] -> [a]
-agregarSi x True l = x : l
-agregarSi _ _ l = l
-
 maxDelPar :: (Int, Int) -> Int 
 maxDelPar (n, m) = if n > m 
                     then n 
@@ -61,19 +57,19 @@ aplanar (l:ls) = l ++ aplanar ls
 --7. 
 pertenece :: Eq a => a -> [a] -> Bool
 --Dados un elemento e y una lista xs devuelve True si existe un elemento en xs que sea igual a e.
-pertenece e [] = False
+pertenece _ [] = False
 pertenece e (x:xs) = e == x || pertenece e xs
 
 --8. 
 {-apariciones :: Eq a => a -> [a] -> Int
 --Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
-apariciones e [] = 0
+apariciones _ [] = 0
 aparaciones e (x:xs) = daUnoSiCumple (e == x) + apariciones e xs-}
 
 --DUDA: no me funciona con la subtarea
 
 apariciones :: Eq a => a -> [a] -> Int
-apariciones e []     = 0
+apariciones _ []     = 0
 apariciones e (x:xs) = if e == x
                         then 1 + apariciones e xs
                         else apariciones e xs
@@ -81,7 +77,7 @@ apariciones e (x:xs) = if e == x
 --9. 
 {-losMenoresA :: Int -> [Int] -> [Int]
 --Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
-losMenoresA n [] = []
+losMenoresA _ [] = []
 losMenoresA n (x:xs) = if x < n 
                         then x : losMenoresA n xs
                         else losMenoresA n xs
@@ -89,15 +85,19 @@ losMenoresA n (x:xs) = if x < n
 
 losMenoresA :: Int -> [Int] -> [Int]
 --Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
-losMenoresA n [] = []
-losMenoresA n (x:xs) = agregarSi x (x < n) (losMenoresA n xs)
+losMenoresA _ [] = []
+losMenoresA n (x:xs) = agregarSi x (x < n) ++ losMenoresA n xs
+
+agregarSi :: a -> Bool -> [a]
+agregarSi x True = x : []
+agregarSi _ _  = []
 
 
 --10. 
-{-
-lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
+
+{-lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
 --Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más de n elementos.
-lasDeLongitudMayorA n [] = []
+lasDeLongitudMayorA _ [] = []
 lasDeLongitudMayorA n (x:xs) = if (length x) > n
                                 then x : lasDeLongitudMayorA n xs
                                 else lasDeLongitudMayorA n xs
@@ -105,8 +105,8 @@ lasDeLongitudMayorA n (x:xs) = if (length x) > n
 
 lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
 --Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más de n elementos.
-lasDeLongitudMayorA n [] = []
-lasDeLongitudMayorA n (x:xs) = agregarSi x (length x > n) (lasDeLongitudMayorA n xs)
+lasDeLongitudMayorA _ [] = []
+lasDeLongitudMayorA n (x:xs) = agregarSi x (longitud x > n) ++ lasDeLongitudMayorA n xs
 
 
 --11. 
@@ -114,12 +114,6 @@ agregarAlFinal :: [a] -> a -> [a]
 --Dados una lista y un elemento, devuelve una lista con ese elemento agregado al final de la lista.
 agregarAlFinal [] e = e : []
 agregarAlFinal (x:xs) e = x : agregarAlFinal xs e 
-
-
-agregarAlFinal' :: [a] -> a -> [a]
---Dados una lista y un elemento, devuelve una lista con ese elemento agregado al final de la lista.
-agregarAlFinal' [] e = e : []
-agregarAlFinal' l  e = l ++ [e]
 
 
 --12. 
@@ -195,5 +189,153 @@ sinLosPrimeros :: Int -> [a] -> [a]
 {-Dados un número n y una lista xs, devuelve una lista sin los primeros n elementos de lista
 recibida. Si n es cero, devuelve la lista completa-}
 sinLosPrimeros _ [] = []
-sinLosPrimeros 0 xs = xs 
---sinLosPrimeros n (x:xs) = 
+sinLosPrimeros 0 xs = xs
+--sinLosPrimeros n xs = 
+
+
+-- //////////////////////////////////////////////////////////////////////////////////////////////
+
+-- PUNTO3: Registros
+
+--1. Definir el tipo de dato Persona, como un nombre y la edad de la persona. Realizar las siguientes funciones:
+
+data Persona = P String Int 
+--               nombre edad
+    deriving Show
+
+homero, marge, bart, lisa, maggie :: Persona
+homero = P "Homero" 39
+marge  = P "Marge"  38
+bart   = P "Bart"   10
+lisa   = P "Lisa"   8
+maggie = P "Maggie" 2
+
+edad :: Persona -> Int
+--Devuelve la edad de una persona
+edad (P n e) = e
+
+
+mayoresA :: Int -> [Persona] -> [Persona]
+--Dados una edad y una lista de personas devuelve a las personas mayores a esa edad.
+mayoresA _  [] = []
+mayoresA n (p:ps) = agregarSi p (edad p > n) ++ mayoresA n ps
+
+
+promedioEdad :: [Persona] -> Int
+--Dada una lista de personas devuelve el promedio de edad entre esas personas. 
+--Precondición: la lista al menos posee una persona.
+promedioEdad ps = div (sumatoria (edades ps)) (longitud ps)
+
+edades :: [Persona] -> [Int]
+--Dada una lista de personas devuelve una lista con sus edades
+edades [] = []
+edades (p:ps) = edad p : edades ps
+
+
+elMasViejo :: [Persona] -> Persona
+--Dada una lista de personas devuelve la persona más vieja de la lista. 
+--Precondición: la lista al menos posee una persona.
+elMasViejo [p] = p
+elMasViejo (p:ps) = laQueEsMayor p (elMasViejo ps)
+
+esMayorQueLaOtra :: Persona -> Persona -> Bool
+--Dadas dos personas indica si la primera es mayor que la segunda.
+esMayorQueLaOtra p1 p2 = edad p1 > edad p2
+
+laQueEsMayor :: Persona -> Persona -> Persona
+--Dadas dos personas devuelve a la persona que sea mayor.
+laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2 
+                        then p1 
+                        else p2
+
+-- ////////////////////////////////////////////////////////////////////////////////////////////////
+
+--2. Modificaremos la representación de Entreador y Pokemon de la práctica anterior de la siguiente manera:
+
+data TipoDePokemon = Agua | Fuego | Planta 
+    deriving Show
+
+data Pokemon = PM TipoDePokemon Int
+--                              %energia
+    deriving Show
+
+data Entrenador = E String [Pokemon]
+--                  nombre /lista de sus pokemones
+    deriving Show
+
+charmander, squirtle, bulbasaur, chicorita :: Pokemon
+charmander = PM Fuego 70
+squirtle = PM Agua 80
+bulbasaur = PM Planta 90
+chicorita = PM Planta 50
+
+ash :: Entrenador
+ash = E "Ash" [charmander, bulbasaur, squirtle]
+
+gari :: Entrenador
+gari = E "Gari" [bulbasaur, chicorita]
+
+--Como puede observarse, ahora los entrenadores tienen una cantidad de Pokemon arbitraria.
+--Definir en base a esa representación las siguientes funciones:
+
+cantPokemon :: Entrenador -> Int
+--Devuelve la cantidad de Pokémon que posee el entrenador.
+cantPokemon e = longitud (pokemonesDe e)
+
+pokemonesDe :: Entrenador -> [Pokemon]
+--dado un entrenador devuelve la lista de sus pokemones
+pokemonesDe (E _ pms) = pms
+
+-- ------------------------------------------------------------------------------------------------
+cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
+--Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
+cantPokemonDe tp (E _ pms) = longitud (pokemonesTipo tp pms)
+
+
+pokemonesTipo :: TipoDePokemon -> [Pokemon] -> [Pokemon]
+--Dado un TipoDePokemon y una lista Pokemon devuelve una lista de pokemones del TipoDePokemon dado
+pokemonesTipo _ [] = []
+pokemonesTipo tp (pm:pms) = if (sonTiposIguales tp (pokemonTipo pm)) 
+                            then pm : pokemonesTipo tp pms
+                            else pokemonesTipo tp pms
+
+sonTiposIguales :: TipoDePokemon -> TipoDePokemon -> Bool
+sonTiposIguales Agua Agua = True
+sonTiposIguales Fuego Fuego = True 
+sonTiposIguales Planta Planta = True 
+sonTiposIguales _ _ = False 
+
+pokemonTipo :: Pokemon -> TipoDePokemon
+--dado un pokemon devuelve su tipo
+pokemonTipo (PM tp _) = tp
+
+-- -----------------------------------------------------------------------------------------------
+
+cuantosDeTipo_De_LeGananATodosLosDe_ :: TipoDePokemon -> Entrenador -> Entrenador -> Int
+{-Dados dos entrenadores, indica la cantidad de Pokemon de cierto tipo, que le ganarían
+a los Pokemon del segundo entrenador.-}
+cuantosDeTipo_De_LeGananATodosLosDe_ tp e1 e2 = if esTipoSuperiorATodosLosPokemones tp (pokemonesDe e2)
+                                                then cantPokemonDe tp e1 
+                                                else 0
+
+esTipoSuperiorATodosLosPokemones :: TipoDePokemon -> [Pokemon] -> Bool
+--Dados un Pokemon y una lista de pokemones indica si el pokemin dado vence a todos los de la lista según su tipo
+esTipoSuperiorATodosLosPokemones _ [] = True
+esTipoSuperiorATodosLosPokemones tp (pm:pms) = tiposuperaAPokemon tp pm && esTipoSuperiorATodosLosPokemones tp pms
+ 
+tiposuperaAPokemon :: TipoDePokemon -> Pokemon -> Bool
+{-Dados dos Pokémon indica si el primero, en base al tipo, es superior al segundo. Agua
+supera a fuego, fuego a planta y planta a agua. Y cualquier otro caso es falso.-}
+tiposuperaAPokemon tp pm = tipoVenceA tp (pokemonTipo pm)
+
+tipoVenceA :: TipoDePokemon -> TipoDePokemon -> Bool
+--dado dos TipoDePokemon indica si el primero vence al segundo
+tipoVenceA Agua Fuego = True
+tipoVenceA Fuego Planta = True
+tipoVenceA Planta Agua = True
+tipoVenceA _ _ = False
+
+-- ------------------------------------------------------------------------------------------------
+
+esMaestroPokemon :: Entrenador -> Bool
+--Dado un entrenador, devuelve True si posee al menos un Pokémon de cada tipo posible.
