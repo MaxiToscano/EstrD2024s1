@@ -1,18 +1,6 @@
 --                      PRÁCTICA 2: LISTAS Y RECURSIÓN ESTRUCTURAL
 
 
-sucesor :: Int -> Int 
-sucesor n = n+1
-
-daUnoSiCumple :: Bool -> Int 
-daUnoSiCumple True = 1
-daUnoSiCumple _ = 0
-
-maxDelPar :: (Int, Int) -> Int 
-maxDelPar (n, m) = if n > m 
-                    then n 
-                    else m
-
 -- PUNTO 1: Recursión sobre listas
 
 --Defina las siguientes funciones utilizando recursión estructural sobre listas, salvo que se indique lo contrario:
@@ -34,6 +22,9 @@ sucesores :: [Int] -> [Int]
 --Dada una lista de enteros, devuelve la lista de los sucesores de cada entero.
 sucesores [] = []
 sucesores (n:ns) = sucesor n : sucesores ns 
+
+sucesor :: Int -> Int --función tp-1
+sucesor n = n+1
 
 --4. 
 conjuncion :: [Bool] -> Bool
@@ -67,6 +58,10 @@ apariciones _ [] = 0
 aparaciones e (x:xs) = daUnoSiCumple (e == x) + apariciones e xs-}
 
 --DUDA: no me funciona con la subtarea
+
+daUnoSiCumple :: Bool -> Int --función tp-1
+daUnoSiCumple True = 1
+daUnoSiCumple _ = 0
 
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []     = 0
@@ -123,12 +118,12 @@ elementos de la segunda a continuación. Definida en Haskell como (++).-}
 agregar [] xs = xs
 agregar (x:xs) ys = x: agregar xs ys
 
---13. 
-{-reversa :: [a] -> [a]
+--13. COMPLETAR
+reversa :: [a] -> [a]
 --Dada una lista devuelve la lista con los mismos elementos de atrás para adelante. 
 --Definida en Haskell como reverse.
 reversa [] = []
-reversa (x:xs) = -}
+reversa (x:xs) = reversa xs ++ [x] 
 
 --14. 
 zipMaximos :: [Int] -> [Int] -> [Int]
@@ -139,7 +134,12 @@ zipMaximos [] ns = ns
 zipMaximos ns [] = ns
 zipMaximos (n:ns) (m:ms) = maxDelPar (n,m) : zipMaximos ns ms
 
---15. 
+maxDelPar :: (Int, Int) -> Int --función tp-1
+maxDelPar (n, m) = if n > m 
+                    then n 
+                    else m
+
+--15. COMPLETAR
 {-elMinimo :: Ord a => [a] -> a
 --Dada una lista devuelve el mínimo
 elMinimo [] = []
@@ -150,7 +150,7 @@ elMinimo (x:xs) = -}
 
 -- PUNTO 2: Recursión sobre números
 
---DeFIna las siguientes funciones utilizando recursión sobre números enteros, salvo que se indique lo contrario:
+--Defina las siguientes funciones utilizando recursión sobre números enteros, salvo que se indique lo contrario:
 
 --1. 
 factorial :: Int -> Int
@@ -190,7 +190,7 @@ sinLosPrimeros :: Int -> [a] -> [a]
 recibida. Si n es cero, devuelve la lista completa-}
 sinLosPrimeros _ [] = []
 sinLosPrimeros 0 xs = xs
---sinLosPrimeros n xs = 
+--sinLosPrimeros n xs = COMPLETAR
 
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ bart   = P "Bart"   10
 lisa   = P "Lisa"   8
 maggie = P "Maggie" 2
 
-edad :: Persona -> Int
+edad :: Persona -> Int  --función tp-1
 --Devuelve la edad de una persona
 edad (P n e) = e
 
@@ -238,11 +238,11 @@ elMasViejo :: [Persona] -> Persona
 elMasViejo [p] = p
 elMasViejo (p:ps) = laQueEsMayor p (elMasViejo ps)
 
-esMayorQueLaOtra :: Persona -> Persona -> Bool
+esMayorQueLaOtra :: Persona -> Persona -> Bool  --función tp-1
 --Dadas dos personas indica si la primera es mayor que la segunda.
 esMayorQueLaOtra p1 p2 = edad p1 > edad p2
 
-laQueEsMayor :: Persona -> Persona -> Persona
+laQueEsMayor :: Persona -> Persona -> Persona   --función tp-1
 --Dadas dos personas devuelve a la persona que sea mayor.
 laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2 
                         then p1 
@@ -299,13 +299,13 @@ pokemonesTipo tp (pm:pms) = if (sonTiposIguales tp (pokemonTipo pm))
                             then pm : pokemonesTipo tp pms
                             else pokemonesTipo tp pms
 
-sonTiposIguales :: TipoDePokemon -> TipoDePokemon -> Bool
+sonTiposIguales :: TipoDePokemon -> TipoDePokemon -> Bool   --función tp-1
 sonTiposIguales Agua Agua = True
 sonTiposIguales Fuego Fuego = True 
 sonTiposIguales Planta Planta = True 
 sonTiposIguales _ _ = False 
 
-pokemonTipo :: Pokemon -> TipoDePokemon
+pokemonTipo :: Pokemon -> TipoDePokemon --función tp-1
 --dado un pokemon devuelve su tipo
 pokemonTipo (PM tp _) = tp
 
@@ -328,7 +328,7 @@ tiposuperaAPokemon :: TipoDePokemon -> Pokemon -> Bool
 supera a fuego, fuego a planta y planta a agua. Y cualquier otro caso es falso.-}
 tiposuperaAPokemon tp pm = tipoVenceA tp (pokemonTipo pm)
 
-tipoVenceA :: TipoDePokemon -> TipoDePokemon -> Bool
+tipoVenceA :: TipoDePokemon -> TipoDePokemon -> Bool    --función tp-1
 --dado dos TipoDePokemon indica si el primero vence al segundo
 tipoVenceA Agua Fuego = True
 tipoVenceA Fuego Planta = True
@@ -339,3 +339,76 @@ tipoVenceA _ _ = False
 
 esMaestroPokemon :: Entrenador -> Bool
 --Dado un entrenador, devuelve True si posee al menos un Pokémon de cada tipo posible.
+esMaestroPokemon (E _ pms) = hayPokemonTipo Agua pms  && 
+                             hayPokemonTipo Fuego pms &&
+                             hayPokemonTipo Planta pms
+
+hayPokemonTipo :: TipoDePokemon -> [Pokemon] -> Bool
+hayPokemonTipo _ [] = False
+hayPokemonTipo tp (pm:pms) = sonTiposIguales tp (pokemonTipo pm) || hayPokemonTipo tp pms
+
+
+-- ////////////////////////////////////////////////////////////////////////////////////////////////
+
+--PUNTO 3. 
+
+{-El tipo de dato Rol representa los roles (desarollo o management) de empleados IT dentro
+de una empresa de software, junto al proyecto en el que se encuentran. Así, una empresa es
+una lista de personas con diferente rol.-}
+--La definición es la siguiente:
+
+data Seniority = Junior | SemiSenior | Senior 
+    deriving Show
+data Proyecto = ConsProyecto String 
+    deriving Show
+data Rol = Developer Seniority Proyecto | Management Seniority Proyecto 
+    deriving Show
+data Empresa = ConsEmpresa [Rol] 
+    deriving Show
+
+paginaWeb, baseDeDatos, frontEnd, backEnd :: Proyecto
+paginaWeb = ConsProyecto "Pagina Web"
+baseDeDatos = ConsProyecto "baseDeDatos"
+frontEnd = ConsProyecto "Front End"
+backEnd = ConsProyecto "Back End"
+
+bill, steve, mark, jeff, elon :: Rol
+bill  = Developer  SemiSenior frontEnd
+steve = Management Senior     backEnd 
+mark  = Developer  Senior     baseDeDatos
+jeff  = Management SemiSenior baseDeDatos
+elon  = Developer  Junior     frontEnd
+
+multiEmpresa :: Empresa
+multiEmpresa = ConsEmpresa [bill, steve, mark, jeff, elon]
+
+--Definir las siguientes funciones sobre el tipo Empresa:
+
+--proyectos :: Empresa -> [Proyecto]
+--Dada una empresa denota la lista de proyectos en los que trabaja, sin elementos repetidos.
+--proyectos (ConsEmpresa (r:rs)) = agregarSi (proyectoDeRol r) (not pertenece (proyectoDeRol r rs)) ++ proyectos rs
+
+proyectosDeRoles :: [Rol] -> [Proyecto]
+--Dada un alista de roles devuelve una lista de los proyectos que tienen
+proyectosDeRoles [] = []
+proyectosDeRoles (r:rs) = proyectoDeRol r : proyectosDeRoles rs
+
+proyectoDeRol :: Rol -> Proyecto
+proyectoDeRol (Developer _ p) = p 
+proyectoDeRol (Management _ p) = p
+
+rolesDeEmpresa :: Empresa -> [Rol] 
+rolesDeEmpresa (ConsEmpresa rs) = rs
+
+
+--agregarSi (proyectoDeRol r) not (pertenece (proyectoDeRol r) rs)
+
+
+{-losDevSenior :: Empresa -> [Proyecto] -> Int
+Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen
+además a los proyectos dados por parámetro.
+cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
+Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
+asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
+Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su
+cantidad de personas involucradas.-}
