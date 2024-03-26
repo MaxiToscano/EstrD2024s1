@@ -140,10 +140,9 @@ maxDelPar (n, m) = if n > m
                     else m
 
 --15. COMPLETAR
-{-elMinimo :: Ord a => [a] -> a
+--elMinimo :: Ord a => [a] -> a
 --Dada una lista devuelve el mínimo
-elMinimo [] = []
-elMinimo (x:xs) = -}
+
 
 
 -- /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,10 +187,9 @@ losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
 sinLosPrimeros :: Int -> [a] -> [a]
 {-Dados un número n y una lista xs, devuelve una lista sin los primeros n elementos de lista
 recibida. Si n es cero, devuelve la lista completa-}
-sinLosPrimeros _ [] = []
 sinLosPrimeros 0 xs = xs
---sinLosPrimeros n xs = COMPLETAR
-
+sinLosPrimeros _ [] = []
+sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -384,9 +382,9 @@ multiEmpresa = ConsEmpresa [bill, steve, mark, jeff, elon]
 
 --Definir las siguientes funciones sobre el tipo Empresa:
 
---proyectos :: Empresa -> [Proyecto]
+proyectos :: Empresa -> [Proyecto] -- COMPLETAR
 --Dada una empresa denota la lista de proyectos en los que trabaja, sin elementos repetidos.
---proyectos (ConsEmpresa (r:rs)) = agregarSi (proyectoDeRol r) (not pertenece (proyectoDeRol r rs)) ++ proyectos rs
+proyectos  (ConsEmpresa rs) = sinElementosRepetidos (proyectosDeRoles rs)
 
 proyectosDeRoles :: [Rol] -> [Proyecto]
 --Dada un alista de roles devuelve una lista de los proyectos que tienen
@@ -397,12 +395,23 @@ proyectoDeRol :: Rol -> Proyecto
 proyectoDeRol (Developer _ p) = p 
 proyectoDeRol (Management _ p) = p
 
+sonMismoProyecto :: Proyecto -> Proyecto -> Bool
+sonMismoProyecto p1 p2 = nombreDelproyecto p1 == nombreDelproyecto p2
+
+nombreDelproyecto :: Proyecto -> String
+nombreDelproyecto (ConsProyecto n) = n
+
 rolesDeEmpresa :: Empresa -> [Rol] 
 rolesDeEmpresa (ConsEmpresa rs) = rs
 
+sinElementosRepetidos :: Eq a => [a] -> [a]
+--Dada una lista de elementos devuelve la misma lista pero sacando los elementos que esten repetidos
+sinElementosRepetidos [] = []
+sinElementosRepetidos (x:xs) = if not (pertenece x xs)
+                                then x : sinElementosRepetidos xs
+                                else sinElementosRepetidos xs
 
---agregarSi (proyectoDeRol r) not (pertenece (proyectoDeRol r) rs)
-
+--agregarSi (proyectoDeRol r) (not pertenece (proyectoDeRol r rs)) ++ proyectos rs
 
 {-losDevSenior :: Empresa -> [Proyecto] -> Int
 Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen
