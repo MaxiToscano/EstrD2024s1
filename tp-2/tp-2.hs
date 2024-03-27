@@ -52,16 +52,16 @@ pertenece _ [] = False
 pertenece e (x:xs) = e == x || pertenece e xs
 
 --8. 
-{-apariciones :: Eq a => a -> [a] -> Int
+{-apariciones' :: Eq a => a -> [a] -> Int
 --Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
-apariciones _ [] = 0
-aparaciones e (x:xs) = daUnoSiCumple (e == x) + apariciones e xs-}
+apariciones' _ [] = 0
+aparaciones' e (x:xs) = unoSi (e == x) + apariciones' e xs-}
 
 --DUDA: no me funciona con la subtarea
 
-daUnoSiCumple :: Bool -> Int --función tp-1
-daUnoSiCumple True = 1
-daUnoSiCumple _ = 0
+unoSi :: Bool -> Int --función tp-1
+unoSi True = 1
+unoSi _ = 0
 
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []     = 0
@@ -70,14 +70,6 @@ apariciones e (x:xs) = if e == x
                         else apariciones e xs
 
 --9. 
-{-losMenoresA :: Int -> [Int] -> [Int]
---Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
-losMenoresA _ [] = []
-losMenoresA n (x:xs) = if x < n 
-                        then x : losMenoresA n xs
-                        else losMenoresA n xs
--}
-
 losMenoresA :: Int -> [Int] -> [Int]
 --Dados un número n y una lista xs, devuelve todos los elementos de xs que son menores a n.
 losMenoresA _ [] = []
@@ -89,15 +81,6 @@ agregarSi _ _  = []
 
 
 --10. 
-
-{-lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
---Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más de n elementos.
-lasDeLongitudMayorA _ [] = []
-lasDeLongitudMayorA n (x:xs) = if (length x) > n
-                                then x : lasDeLongitudMayorA n xs
-                                else lasDeLongitudMayorA n xs
--}
-
 lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
 --Dados un número n y una lista de listas, devuelve la lista de aquellas listas que tienen más de n elementos.
 lasDeLongitudMayorA _ [] = []
@@ -140,9 +123,16 @@ maxDelPar (n, m) = if n > m
                     else m
 
 --15. COMPLETAR
---elMinimo :: Ord a => [a] -> a
+elMinimo :: Ord a => [a] -> a
 --Dada una lista devuelve el mínimo
+--PRECOND: la lista no es vacía
+elMinimo [x] = x
+elMinimo (x:xs) = minimoEntre x (elMinimo xs)
 
+minimoEntre :: Ord a => a -> a -> a
+minimoEntre x y = if x < y 
+                    then x
+                    else y
 
 
 -- /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,6 +235,7 @@ laQueEsMayor :: Persona -> Persona -> Persona   --función tp-1
 laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2 
                         then p1 
                         else p2
+
 
 -- ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -375,7 +366,7 @@ bill  = Developer  SemiSenior frontEnd
 steve = Management Senior     backEnd 
 mark  = Developer  Senior     baseDeDatos
 jeff  = Management SemiSenior baseDeDatos
-elon  = Developer  Junior     frontEnd
+elon  = Developer  Junior     paginaWeb
 
 multiEmpresa :: Empresa
 multiEmpresa = ConsEmpresa [bill, steve, mark, jeff, elon]
@@ -384,10 +375,22 @@ multiEmpresa = ConsEmpresa [bill, steve, mark, jeff, elon]
 
 proyectos :: Empresa -> [Proyecto] -- COMPLETAR
 --Dada una empresa denota la lista de proyectos en los que trabaja, sin elementos repetidos.
-proyectos  (ConsEmpresa rs) = sinElementosRepetidos (proyectosDeRoles rs)
+proyectos  (ConsEmpresa rs) = proyectosDeRoleSinRepetir rs
+
+proyectosDeRoleSinRepetir :: [Rol] -> [Proyecto]
+proyectosDeRoleSinRepetir [] = []
+proyectosDeRoleSinRepetir rs = proyectosSinRepetir (proyectosDeRoles rs) 
+
+proyectosSinRepetir :: [Proyecto] -> [Proyecto]
+proyectosSinRepetir [] = []
+proyectosSinRepetir (p:ps) = agregarSi p (not (estaProyectoEnLaLista p ps)) ++ (proyectosSinRepetir ps)
+
+estaProyectoEnLaLista :: Proyecto -> [Proyecto] -> Bool
+estaProyectoEnLaLista p [] = False
+estaProyectoEnLaLista p (py:pys) = sonMismoProyecto p py || estaProyectoEnLaLista p pys
 
 proyectosDeRoles :: [Rol] -> [Proyecto]
---Dada un alista de roles devuelve una lista de los proyectos que tienen
+--Dada una lista de roles devuelve una lista de los proyectos que tienen
 proyectosDeRoles [] = []
 proyectosDeRoles (r:rs) = proyectoDeRol r : proyectosDeRoles rs
 
@@ -401,21 +404,10 @@ sonMismoProyecto p1 p2 = nombreDelproyecto p1 == nombreDelproyecto p2
 nombreDelproyecto :: Proyecto -> String
 nombreDelproyecto (ConsProyecto n) = n
 
-rolesDeEmpresa :: Empresa -> [Rol] 
-rolesDeEmpresa (ConsEmpresa rs) = rs
-
-sinElementosRepetidos :: Eq a => [a] -> [a]
---Dada una lista de elementos devuelve la misma lista pero sacando los elementos que esten repetidos
-sinElementosRepetidos [] = []
-sinElementosRepetidos (x:xs) = if not (pertenece x xs)
-                                then x : sinElementosRepetidos xs
-                                else sinElementosRepetidos xs
-
---agregarSi (proyectoDeRol r) (not pertenece (proyectoDeRol r rs)) ++ proyectos rs
-
-{-losDevSenior :: Empresa -> [Proyecto] -> Int
-Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen
-además a los proyectos dados por parámetro.
+-- ----------------------------------------------------------------------------------------------------------
+{-}
+losDevSenior :: Empresa -> [Proyecto] -> Int
+--Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen además a los proyectos dados por parámetro.
 cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
 Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
