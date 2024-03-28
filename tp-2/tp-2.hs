@@ -404,10 +404,35 @@ sonMismoProyecto p1 p2 = nombreDelproyecto p1 == nombreDelproyecto p2
 nombreDelproyecto :: Proyecto -> String
 nombreDelproyecto (ConsProyecto n) = n
 
--- ----------------------------------------------------------------------------------------------------------
-{-}
+-- -------------------------------------------------------------------------------------------------
+
 losDevSenior :: Empresa -> [Proyecto] -> Int
 --Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen además a los proyectos dados por parámetro.
+losDevSenior _ [] = 0
+losDevSenior e pys = longitud (desarrolladoresSeniorQueTrabajanEn (rolesdeEmpresa e) pys)
+
+rolesdeEmpresa :: Empresa -> [Rol]
+rolesdeEmpresa (ConsEmpresa rs) = rs
+
+desarrolladoresSeniorQueTrabajanEn :: [Rol] -> [Proyecto] -> [Rol]
+desarrolladoresSeniorQueTrabajanEn [] _ = []
+desarrolladoresSeniorQueTrabajanEn _ [] = []
+desarrolladoresSeniorQueTrabajanEn (r:rs) (p:ps) = agregarSi r (esDesarroladorSeniorYTrabajaEn r p) 
+                                                  ++ desarrolladoresSeniorQueTrabajanEn rs ps
+
+esDesarroladorSeniorYTrabajaEn :: Rol -> Proyecto -> Bool
+esDesarroladorSeniorYTrabajaEn r p = esDesarrolladorSenior r && trabajaEnProyecto r p
+
+esDesarrolladorSenior :: Rol -> Bool
+esDesarrolladorSenior (Developer Senior _) = True
+esDesarrolladorSenior _                    = False
+
+trabajaEnProyecto :: Rol -> Proyecto -> Bool
+trabajaEnProyecto (Developer _ p) py = sonMismoProyecto p py
+trabajaEnProyecto (Management _ p) py = sonMismoProyecto p py
+ 
+-- -------------------------------------------------------------------------------------------------
+{-}
 cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
 Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
