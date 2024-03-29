@@ -122,7 +122,7 @@ maxDelPar (n, m) = if n > m
                     then n 
                     else m
 
---15. COMPLETAR
+--15. 
 elMinimo :: Ord a => [a] -> a
 --Dada una lista devuelve el mínimo
 --PRECOND: la lista no es vacía
@@ -333,6 +333,7 @@ esMaestroPokemon (E _ pms) = hayPokemonTipo Agua pms  &&
                              hayPokemonTipo Planta pms
 
 hayPokemonTipo :: TipoDePokemon -> [Pokemon] -> Bool
+--Dado un TipoDePokemon y una lista de Pokemones, indica si hay algún Pokemon del tipo dado
 hayPokemonTipo _ [] = False
 hayPokemonTipo tp (pm:pms) = sonTiposIguales tp (pokemonTipo pm) || hayPokemonTipo tp pms
 
@@ -373,19 +374,22 @@ multiEmpresa = ConsEmpresa [bill, steve, mark, jeff, elon]
 
 --Definir las siguientes funciones sobre el tipo Empresa:
 
-proyectos :: Empresa -> [Proyecto] -- COMPLETAR
+proyectos :: Empresa -> [Proyecto] 
 --Dada una empresa denota la lista de proyectos en los que trabaja, sin elementos repetidos.
 proyectos  (ConsEmpresa rs) = proyectosDeRoleSinRepetir rs
 
 proyectosDeRoleSinRepetir :: [Rol] -> [Proyecto]
+--Dada una lista de Roles, devuelve los proyectos sin repetir en los que trabajan
 proyectosDeRoleSinRepetir [] = []
 proyectosDeRoleSinRepetir rs = proyectosSinRepetir (proyectosDeRoles rs) 
 
 proyectosSinRepetir :: [Proyecto] -> [Proyecto]
+--Dada una lista de proyectos, devuelve la lista sin los elementos que se repiten
 proyectosSinRepetir [] = []
 proyectosSinRepetir (p:ps) = agregarSi p (not (estaProyectoEnLaLista p ps)) ++ (proyectosSinRepetir ps)
 
 estaProyectoEnLaLista :: Proyecto -> [Proyecto] -> Bool
+--Dado un Proyecto y una lista de Proyectos, indica si el Proyecto dado se encuentra en la lista.
 estaProyectoEnLaLista p [] = False
 estaProyectoEnLaLista p (py:pys) = sonMismoProyecto p py || estaProyectoEnLaLista p pys
 
@@ -395,13 +399,16 @@ proyectosDeRoles [] = []
 proyectosDeRoles (r:rs) = proyectoDeRol r : proyectosDeRoles rs
 
 proyectoDeRol :: Rol -> Proyecto
+--Dado un Rol, devuelve el Proyecto en el que está asignado.
 proyectoDeRol (Developer _ p) = p 
 proyectoDeRol (Management _ p) = p
 
 sonMismoProyecto :: Proyecto -> Proyecto -> Bool
+--Dado 2 Proyectos, indica si son iguales.
 sonMismoProyecto p1 p2 = nombreDelproyecto p1 == nombreDelproyecto p2
 
 nombreDelproyecto :: Proyecto -> String
+--Devuelve el nombre del Proyecto dado.
 nombreDelproyecto (ConsProyecto n) = n
 
 -- -------------------------------------------------------------------------------------------------
@@ -412,29 +419,57 @@ losDevSenior _ [] = 0
 losDevSenior e pys = longitud (desarrolladoresSeniorQueTrabajanEn (rolesdeEmpresa e) pys)
 
 rolesdeEmpresa :: Empresa -> [Rol]
+--Devuelve una lista de Roles de la Empresa dada.
 rolesdeEmpresa (ConsEmpresa rs) = rs
 
 desarrolladoresSeniorQueTrabajanEn :: [Rol] -> [Proyecto] -> [Rol]
+--Dada una lista de Roles y una lista de Proyectos, devuelve una lista de los Roles que sean Developer Senior que trabajen en los Proyectos dados.
 desarrolladoresSeniorQueTrabajanEn [] _ = []
 desarrolladoresSeniorQueTrabajanEn _ [] = []
-desarrolladoresSeniorQueTrabajanEn (r:rs) (p:ps) = agregarSi r (esDesarroladorSeniorYTrabajaEn r p) 
-                                                  ++ desarrolladoresSeniorQueTrabajanEn rs ps
-
-esDesarroladorSeniorYTrabajaEn :: Rol -> Proyecto -> Bool
-esDesarroladorSeniorYTrabajaEn r p = esDesarrolladorSenior r && trabajaEnProyecto r p
-
+desarrolladoresSeniorQueTrabajanEn (r:rs) pys = agregarSi r (esDesarrolladorSenior r && trabajaEnAlgunProyecto r pys) 
+                                                  ++ desarrolladoresSeniorQueTrabajanEn rs pys
+                                    
 esDesarrolladorSenior :: Rol -> Bool
+--Indica si el Rol dado es Developer Senior
 esDesarrolladorSenior (Developer Senior _) = True
 esDesarrolladorSenior _                    = False
 
+trabajaEnAlgunProyecto :: Rol -> [Proyecto] -> Bool
+--Indica si el Rol dado trabaja en algún Proyecto de la lista dada.
+trabajaEnAlgunProyecto _ [] = False
+trabajaEnAlgunProyecto r (py:pys) = trabajaEnProyecto r py || trabajaEnAlgunProyecto r pys
+
 trabajaEnProyecto :: Rol -> Proyecto -> Bool
+----Indica si el Rol dado trabaja en el Proyecto dado.
 trabajaEnProyecto (Developer _ p) py = sonMismoProyecto p py
 trabajaEnProyecto (Management _ p) py = sonMismoProyecto p py
  
 -- -------------------------------------------------------------------------------------------------
-{-}
+
 cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
-Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
+--Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
+cantQueTrabajanEn [] _ = 0
+cantQueTrabajanEn pys e = longitud (empleadosDeEmpresaQueTrabajanEn (rolesdeEmpresa e) pys)
+
+empleadosDeEmpresaQueTrabajanEn :: [Rol] -> [Proyecto] -> [Rol]
+--Dada una lista de Roles y una lista de Proyectos, devuelve la lista de Roles que trabajan en alguno de los Proyectos dados.
+empleadosDeEmpresaQueTrabajanEn [] _ = []
+empleadosDeEmpresaQueTrabajanEn _ [] = []
+empleadosDeEmpresaQueTrabajanEn (r:rs) pys = agregarSi r (trabajaEnAlgunProyecto r pys) 
+                                             ++ empleadosDeEmpresaQueTrabajanEn rs pys
+
+-- ------------------------------------------------------------------------------------------------
+
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
-Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su
-cantidad de personas involucradas.-}
+--Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas.
+asignadosPorProyecto e = rolesAsignadosPorProyecto (rolesdeEmpresa e)
+
+rolesAsignadosPorProyecto :: [Rol] -> [(Proyecto, Int)]
+rolesAsignadosPorProyecto []     = []
+rolesAsignadosPorProyecto (r:rs) = agregarProyectoATuplas (proyectoDeRol r) (rolesAsignadosPorProyecto rs)
+
+agregarProyectoATuplas :: Proyecto -> [(Proyecto, Int)] -> [(Proyecto, Int)]
+agregarProyectoATuplas p []           = [(p, 1)]
+agregarProyectoATuplas p ((py, n):pys) = if sonMismoProyecto p py
+                                         then (py, (n+1)):pys
+                                         else (py,n) : agregarProyectoATuplas p pys
