@@ -465,11 +465,12 @@ asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 asignadosPorProyecto e = rolesAsignadosPorProyecto (rolesdeEmpresa e)
 
 rolesAsignadosPorProyecto :: [Rol] -> [(Proyecto, Int)]
+--Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas de los Roles dados.
 rolesAsignadosPorProyecto []     = []
 rolesAsignadosPorProyecto (r:rs) = agregarProyectoATuplas (proyectoDeRol r) (rolesAsignadosPorProyecto rs)
 
 agregarProyectoATuplas :: Proyecto -> [(Proyecto, Int)] -> [(Proyecto, Int)]
 agregarProyectoATuplas p []           = [(p, 1)]
 agregarProyectoATuplas p ((py, n):pys) = if sonMismoProyecto p py
-                                         then (py, (n+1)):pys
+                                         then (py, (n+1)) : pys
                                          else (py,n) : agregarProyectoATuplas p pys
