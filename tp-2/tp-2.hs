@@ -51,17 +51,17 @@ pertenece :: Eq a => a -> [a] -> Bool
 pertenece _ [] = False
 pertenece e (x:xs) = e == x || pertenece e xs
 
---8. 
+--8. --DUDA: no me funciona con la subtarea.
+
 {-apariciones' :: Eq a => a -> [a] -> Int
 --Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
 apariciones' _ [] = 0
-aparaciones' e (x:xs) = unoSi (e == x) + apariciones' e xs-}
+aparaciones' e (x:xs) = unoSi (e == x) + apariciones' e xs
 
---DUDA: no me funciona con la subtarea
-
-unoSi :: Bool -> Int --función tp-1
+unoSi :: Bool -> Int 
 unoSi True = 1
 unoSi _ = 0
+-}
 
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []     = 0
