@@ -168,7 +168,7 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
     deriving Show
 
 treeN :: Tree Int
-treeN = NodeT 2 (NodeT 2(NodeT 3 EmptyT EmptyT) EmptyT) (NodeT 5 EmptyT EmptyT)
+treeN = NodeT 2 (NodeT 2 (NodeT 3 EmptyT EmptyT) EmptyT) (NodeT 5 (NodeT 4 EmptyT EmptyT) EmptyT)
 
 --defina las siguientes funciones utilizando recursión estructural según corresponda:
 
@@ -218,19 +218,37 @@ heightT EmptyT = 0
 heightT (NodeT e t1 t2) = 1 + max (heightT t1) (heightT t2)
 
 
-{-8. mirrorT :: Tree a -> Tree a
-Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho,
-en cada nodo del árbol.
-9. toList :: Tree a -> [a]
-Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order.
-Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz
-y luego los elementos del hijo derecho.
-10. levelN :: Int -> Tree a -> [a]
-Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un
+--8. 
+mirrorT :: Tree a -> Tree a
+--Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho en cada nodo del árbol.
+mirrorT EmptyT = EmptyT
+mirrorT (NodeT e t1 t2) = NodeT e (mirrorT t2) (mirrorT t1)
+
+--9. CONSULTAR
+toList :: Tree a -> [a]
+--Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order.
+--Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz y luego los elementos del hijo derecho.
+toList EmptyT = []
+toList (NodeT e t1 t2) = reversa (e:leaves t1) ++ leaves t2
+
+reversa :: [a] -> [a]
+--Dada una lista devuelve la lista con los mismos elementos de atrás para adelante. 
+--Definida en Haskell como reverse.
+reversa [] = []
+reversa (x:xs) = reversa xs ++ [x] 
+
+
+--10. CONSULTAR
+levelN :: Int -> Tree a -> [a] 
+{-Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un
 nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la
-distancia de la raiz a uno de sus hijos es 1.
-Nota: El primer nivel de un árbol (su raíz) es 0.
-11. listPerLevel :: Tree a -> [[a]]
+distancia de la raiz a uno de sus hijos es 1.-}
+--Nota: El primer nivel de un árbol (su raíz) es 0.
+levelN _ EmptyT = []
+levelN n (NodeT e t1 t2) = 
+
+
+{-11. listPerLevel :: Tree a -> [[a]]
 Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de
 dicho árbol.
 12. ramaMasLarga :: Tree a -> [a]
