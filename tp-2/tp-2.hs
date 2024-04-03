@@ -1,7 +1,7 @@
 --                      PRÁCTICA 2: LISTAS Y RECURSIÓN ESTRUCTURAL
 
 
--- PUNTO 1: Recursión sobre listas
+--PUNTO 1: Recursión sobre listas
 
 --Defina las siguientes funciones utilizando recursión estructural sobre listas, salvo que se indique lo contrario:
 
@@ -51,9 +51,17 @@ pertenece :: Eq a => a -> [a] -> Bool
 pertenece _ [] = False
 pertenece e (x:xs) = e == x || pertenece e xs
 
---8. --DUDA: no me funciona con la subtarea.
+--8. 
 
-{-apariciones' :: Eq a => a -> [a] -> Int
+apariciones :: Eq a => a -> [a] -> Int
+apariciones _ []     = 0
+apariciones e (x:xs) = if e == x
+                        then 1 + apariciones e xs
+                        else apariciones e xs
+
+--DUDA: no me funciona con subtarea: 
+
+apariciones' :: Eq a => a -> [a] -> Int
 --Dados un elemento e y una lista xs cuenta la cantidad de apariciones de e en xs.
 apariciones' _ [] = 0
 aparaciones' e (x:xs) = unoSi (e == x) + apariciones' e xs
@@ -61,13 +69,7 @@ aparaciones' e (x:xs) = unoSi (e == x) + apariciones' e xs
 unoSi :: Bool -> Int 
 unoSi True = 1
 unoSi _ = 0
--}
 
-apariciones :: Eq a => a -> [a] -> Int
-apariciones _ []     = 0
-apariciones e (x:xs) = if e == x
-                        then 1 + apariciones e xs
-                        else apariciones e xs
 
 --9. 
 losMenoresA :: Int -> [Int] -> [Int]
@@ -101,7 +103,7 @@ elementos de la segunda a continuación. Definida en Haskell como (++).-}
 agregar [] xs = xs
 agregar (x:xs) ys = x: agregar xs ys
 
---13. COMPLETAR
+--13. 
 reversa :: [a] -> [a]
 --Dada una lista devuelve la lista con los mismos elementos de atrás para adelante. 
 --Definida en Haskell como reverse.
@@ -137,7 +139,7 @@ minimoEntre x y = if x < y
 
 -- /////////////////////////////////////////////////////////////////////////////////////////////////
 
--- PUNTO 2: Recursión sobre números
+--PUNTO 2: Recursión sobre números
 
 --Defina las siguientes funciones utilizando recursión sobre números enteros, salvo que se indique lo contrario:
 
@@ -183,7 +185,7 @@ sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////
 
--- PUNTO3: Registros
+--PUNTO3: Registros
 
 --1. Definir el tipo de dato Persona, como un nombre y la edad de la persona. Realizar las siguientes funciones:
 
@@ -340,7 +342,7 @@ hayPokemonTipo tp (pm:pms) = sonTiposIguales tp (pokemonTipo pm) || hayPokemonTi
 
 -- ////////////////////////////////////////////////////////////////////////////////////////////////
 
---PUNTO 3. 
+--3. 
 
 {-El tipo de dato Rol representa los roles (desarollo o management) de empleados IT dentro
 de una empresa de software, junto al proyecto en el que se encuentran. Así, una empresa es
