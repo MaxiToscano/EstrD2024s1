@@ -229,23 +229,17 @@ toList :: Tree a -> [a]
 --Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order.
 --Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz y luego los elementos del hijo derecho.
 toList EmptyT = []
-toList (NodeT e t1 t2) = reversa (e:leaves t1) ++ leaves t2
-
-reversa :: [a] -> [a]
---Dada una lista devuelve la lista con los mismos elementos de atrás para adelante. 
---Definida en Haskell como reverse.
-reversa [] = []
-reversa (x:xs) = reversa xs ++ [x] 
+toList (NodeT e t1 t2) = toList t1 ++ [e] ++ toList t2
 
 
---10. CONSULTAR
+{---10. CONSULTAR
 levelN :: Int -> Tree a -> [a] 
 {-Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un
 nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la
 distancia de la raiz a uno de sus hijos es 1.-}
 --Nota: El primer nivel de un árbol (su raíz) es 0.
 levelN _ EmptyT = []
-levelN n (NodeT e t1 t2) = 
+levelN n (NodeT e t1 t2) = -}
 
 
 {-11. listPerLevel :: Tree a -> [[a]]
