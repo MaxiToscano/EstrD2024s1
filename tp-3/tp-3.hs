@@ -112,7 +112,7 @@ pasosHastaTesoro (Nada c)       = 1 + pasosHastaTesoro c
 
 ----------------------------------------------------------------------------------------------
 
-hayTesoroEn :: Int -> Camino -> Bool
+hayTesoroEn :: Int -> Camino -> Bool --está mal, arreglar
 {-Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
 pasos es 5, indica si hay un tesoro en 5 pasos.-}
 hayTesoroEn _ Fin = False
@@ -123,6 +123,14 @@ hayTesoroEn n (Cofre _ c) = hayTesoroEn (n-1) c
 esCofreConTesoro :: Camino -> Bool
 esCofreConTesoro (Cofre obs _) = hayTesoroEnObjetos obs
 esCofreConTesoro _             = False  
+
+
+hayTesoroEn' :: Int -> Camino -> Bool --esta mal, arreglar
+{-Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
+pasos es 5, indica si hay un tesoro en 5 pasos.-}
+hayTesoroEn' 0 c = 
+hayTesoroEn' n Fin = False
+hayTesoroEn' n c = hayTesoroEn (n-1) (caminoInterior c)
 
 ----------------------------------------------------------------------------------------------
 
@@ -232,14 +240,15 @@ toList EmptyT = []
 toList (NodeT e t1 t2) = toList t1 ++ [e] ++ toList t2
 
 
-{---10. CONSULTAR
+--10. CONSULTAR
 levelN :: Int -> Tree a -> [a] 
 {-Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un
 nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la
 distancia de la raiz a uno de sus hijos es 1.-}
 --Nota: El primer nivel de un árbol (su raíz) es 0.
 levelN _ EmptyT = []
-levelN n (NodeT e t1 t2) = -}
+levelN 0 (NodeT e _ _) = [e]
+levelN n (NodeT e t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
 
 
 {-11. listPerLevel :: Tree a -> [[a]]
