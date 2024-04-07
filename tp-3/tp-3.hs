@@ -112,7 +112,7 @@ pasosHastaTesoro (Nada c)       = 1 + pasosHastaTesoro c
 
 ----------------------------------------------------------------------------------------------
 
-hayTesoroEn :: Int -> Camino -> Bool --está mal, arreglar
+hayTesoroEn :: Int -> Camino -> Bool 
 {-Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
 pasos es 5, indica si hay un tesoro en 5 pasos.-}
 hayTesoroEn _ Fin = False
@@ -155,21 +155,35 @@ cuantosSonTesoros [] = 0
 cuantosSonTesoros (ob:obs) = unoSi (esTesoro ob) + cuantosSonTesoros obs
 
 -----------------------------------------------------------------------------------------------
-{-
+
 --(desafío) COMPLETAR
-cantTesorosEntre :: Int -> Int -> Camino -> Int
+--cantTesorosEntre :: Int -> Int -> Camino -> Int
 {-Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
 el rango es 3 y 5, indica la cantidad de tesoros que hay entre hacer 3 pasos y hacer 5. Están
 incluidos tanto 3 como 5 en el resultado.-}
-cantTesorosEntre n1 n2 c = if pasosHastaTesoro c > n2 
-                            then 0
-                            else cantDeTesorosEntre n1 n2 c
--------------------------------------------------------------
-cantDePasosEn :: Camino -> Int
-cantDePasosEn Fin = 0
-cantDePasosEn (Nada c) = 1 + cantDePasosEn c
-cantDePasosEn (Cofre _ c) = 1 + cantDePasosEn c
--}
+--cantTesorosEntre n m c = 
+
+cantDeTesorosDesde :: Int -> Camino -> Int 
+cantDeTesorosDesde _ Fin = 0
+cantDeTesorosDesde 0 (Nada c) = cantDeTesorosEn c
+cantDeTesorosDesde 0 (Cofre obs c) = cuantosSonTesoros obs + cantDeTesorosEn c
+cantDeTesorosDesde n cam = cantDeTesorosDesde (n-1) (caminoInterior cam)
+
+cantDeTesorosHasta :: Int -> Camino -> Int
+cantDeTesorosHasta _ Fin = 0
+cantDeTesorosHasta 0 (Nada _) = 0
+cantDeTesorosHasta 0 (Cofre obs _) = cuantosSonTesoros obs 
+cantDeTesorosHasta n (Nada c) = cantDeTesorosHasta (n-1) c
+cantDeTesorosHasta n (Cofre obs c) = cantDeTesorosHasta (n-1) c + cuantosSonTesoros obs 
+
+caminoDesde :: Int -> Camino -> Camino
+caminoDesde _ Fin = Fin
+caminoDesde 0 (Nada c) = c 
+caminoDesde 0 (Cofre _ c) = c
+caminoDesde n (Nada c) = caminoDesde (n-1) c
+caminoDesde n (Cofre _ c) = caminoDesde (n-1) c
+
+
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 --PUNTO 2. Tipos arbóreos
