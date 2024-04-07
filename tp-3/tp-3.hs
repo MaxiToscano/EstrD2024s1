@@ -125,12 +125,18 @@ esCofreConTesoro (Cofre obs _) = hayTesoroEnObjetos obs
 esCofreConTesoro _             = False  
 
 
-hayTesoroEn' :: Int -> Camino -> Bool --esta mal, arreglar
+hayTesoroEn' :: Int -> Camino -> Bool --versión hecha en clase práctica
 {-Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
 pasos es 5, indica si hay un tesoro en 5 pasos.-}
-hayTesoroEn' 0 c = 
-hayTesoroEn' n Fin = False
-hayTesoroEn' n c = hayTesoroEn (n-1) (caminoInterior c)
+hayTesoroEn' _ Fin           = False  
+hayTesoroEn' 0 (Nada c)      = False 
+hayTesoroEn' 0 (Cofre obs c) = hayTesoroEnObjetos obs
+hayTesoroEn' n c             = hayTesoroEn (n-1) (caminoInterior c)        
+
+caminoInterior :: Camino -> Camino
+caminoInterior Fin = error "No puede ser Fin"
+caminoInterior (Nada c) = c
+caminoInterior (Cofre _ c) = c
 
 ----------------------------------------------------------------------------------------------
 
@@ -176,7 +182,7 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
     deriving Show
 
 treeN :: Tree Int
-treeN = NodeT 2 (NodeT 2 (NodeT 3 EmptyT EmptyT) EmptyT) (NodeT 5 (NodeT 4 EmptyT EmptyT) EmptyT)
+treeN = NodeT 2 (NodeT 2 (NodeT 3 EmptyT EmptyT) EmptyT) (NodeT 5 (NodeT 4 (NodeT 3 EmptyT EmptyT) EmptyT) EmptyT)
 
 --defina las siguientes funciones utilizando recursión estructural según corresponda:
 
@@ -232,7 +238,7 @@ mirrorT :: Tree a -> Tree a
 mirrorT EmptyT = EmptyT
 mirrorT (NodeT e t1 t2) = NodeT e (mirrorT t2) (mirrorT t1)
 
---9. CONSULTAR
+--9. 
 toList :: Tree a -> [a]
 --Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order.
 --Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz y luego los elementos del hijo derecho.
@@ -240,7 +246,7 @@ toList EmptyT = []
 toList (NodeT e t1 t2) = toList t1 ++ [e] ++ toList t2
 
 
---10. CONSULTAR
+--10. 
 levelN :: Int -> Tree a -> [a] 
 {-Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un
 nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la
@@ -251,16 +257,98 @@ levelN 0 (NodeT e _ _) = [e]
 levelN n (NodeT e t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
 
 
-{-11. listPerLevel :: Tree a -> [[a]]
-Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de
-dicho árbol.
-12. ramaMasLarga :: Tree a -> [a]
-Devuelve los elementos de la rama más larga del árbol
-13. todosLosCaminos :: Tree a -> [[a]]
-Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera
-de los nodos.
-todosLosCaminos (NodeT 1 (NodeT 2 (NodeT 3 EmptyT EmptyT)
-EmptyT)
-(NodeT 4 (NodeT 5 EmptyT EmptyT)
-EmptyT))
+--11. 
+listPerLevel :: Tree a -> [[a]]
+--Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de dicho árbol.
+listPerLevel EmptyT = []
+listPerLevel (NodeT e t1 t2) = [e] : juntarNiveles (listPerLevel t1) (listPerLevel t2)
+
+juntarNiveles :: [[a]] -> [[a]] -> [[a]]
+juntarNiveles [] yss = yss
+juntarNiveles xss [] = xss
+juntarNiveles (xs:xss) (ys:yss) = (xs ++ ys) : juntarNiveles xss yss
+
+
+--12. 
+ramaMasLarga :: Tree a -> [a]
+--Devuelve los elementos de la rama más larga del árbol
+ramaMasLarga EmptyT = []
+ramaMasLarga (NodeT e t1 t2) = if sizeT t1 > sizeT t2 
+                                then e : leaves t1 
+                                else e : leaves t2
+                            
+
+--13. 
+todosLosCaminos :: Tree a -> [[a]]
+--Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera de los nodos.
+todosLosCaminos EmptyT = []
+todosLosCaminos (NodeT e t1 t2) = [e] : consACada e (todosLosCaminos t1) ++ consACada e (todosLosCaminos t2)
+
+consACada :: a -> [[a]] -> [[a]]
+consACada x [] = []
+consACada x (xs:xss) = (x:xs) : consACada x xss
+
+{-todosLosCaminos (NodeT 1 (NodeT 2 (NodeT 3 EmptyT EmptyT) EmptyT)
+                         (NodeT 4 (NodeT 5 EmptyT EmptyT) EmptyT))
+
 = [ [1], [1,2], [1,2,3], [1,4], [1,4,5] ]-}
+
+-- ////////////////////////////////////////////////////////////////////////////////////////////////
+
+--Punto 2.2: Expresiones Aritméticas
+
+--El tipo algebraico ExpA modela expresiones aritméticas de la siguiente manera:
+
+data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
+    deriving Show
+
+expa1 :: ExpA
+expa1 = Sum (Prod (Neg (Valor (-4))) (Valor 0)) (Valor 6)
+
+--Implementar las siguientes funciones utilizando el esquema de recursión estructural sobre Exp:
+
+--1. 
+eval :: ExpA -> Int
+--Dada una expresión aritmética devuelve el resultado evaluarla.
+eval (Valor n) = n
+eval (Sum e1 e2) = eval e1 + eval e2
+eval (Prod e1 e2) = eval e1 * eval e2    
+eval (Neg e) = eval e * (-1)
+
+
+--2. 
+simplificar :: ExpA -> ExpA
+--Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando notación matemática convencional):
+simplificar (Valor n) = Valor n
+simplificar (Sum e1 e2) = sumSimplificada (simplificar e1) (simplificar e2)
+simplificar (Prod e1 e2) = prodSimplificado (simplificar e1) (simplificar e2)
+simplificar (Neg e) = negSimplificado (simplificar e)
+
+sumSimplificada :: ExpA -> ExpA -> ExpA
+sumSimplificada (Valor 0) e2 = e2
+sumSimplificada e1 (Valor 0) = e1  
+sumSimplificada e1 e2        = Sum e1 e2
+
+prodSimplificado :: ExpA -> ExpA -> ExpA
+prodSimplificado (Valor 0) _ = Valor 0
+prodSimplificado _ (Valor 0) = Valor 0 
+prodSimplificado (Valor 1) e2 = e2
+prodSimplificado e1 (Valor 1) = e1
+prodSimplificado e1 e2       = Prod e1 e2
+
+negSimplificado :: ExpA -> ExpA
+negSimplificado (Neg e) = e
+negSimplificado e       = Neg e
+
+
+{-También existen otras definiciones posibles. Por ejemplo, puede definirse como la distancia del camino desde la
+raíz a su hoja más lejana. Por distancia entendemos la cantidad de nodos que hay en dicho camino. En este caso
+las hojas tendrían altura 0, porque la distancia del camino a sí mismos lo es. Se suele utilizar más en árboles que
+no poseen un constructor vacío.-}
+
+{-
+a) 0 + x = x + 0 = x
+b) 0 * x = x * 0 = 0
+c) 1 * x = x * 1 = x
+d) - (- x) = x
+-}
