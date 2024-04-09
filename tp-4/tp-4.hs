@@ -183,8 +183,31 @@ heightT :: Mapa -> Int
 heightT (Fin _) = 0            
 heightT (Bifurcacion _ m1 m2) = 1 + heightT m1 + heightT m2            
                                                
+------------------------------------------------------------------------------
 
-{-5. tesorosPorNivel :: Mapa -> [[Objeto]]
-Devuelve los tesoros separados por nivel en el árbol.
-6. todosLosCaminos :: Mapa -> [[Dir]]
+--5. 
+tesorosPorNivel :: Mapa -> [[Objeto]]
+--Devuelve los tesoros separados por nivel en el árbol.
+tesorosPorNivel (Fin c) = tesorosEn (objetosDelCofre c) : []
+tesorosPorNivel (Bifurcacion c m1 m2) = tesorosEn (objetosDelCofre c) : juntarNiveles (tesorosPorNivel m1) (tesorosPorNivel m2)
+
+juntarNiveles :: [[a]] -> [[a]] -> [[a]]
+juntarNiveles [] yss = yss
+juntarNiveles xss [] = xss
+juntarNiveles (xs:xss) (ys:yss) = (xs ++ ys) : juntarNiveles xss yss
+
+tesorosEn :: [Objeto] -> [Objeto]
+tesorosEn [] = []
+tesorosEn (ob:obs) = singularSi ob (esTesoro ob) ++ tesorosEn obs
+
+objetosDelCofre :: Cofre -> [Objeto]
+objetosDelCofre (Cofre obs) = obs
+
+singularSi :: a -> Bool -> [a]
+singularSi a True = [a]
+singularSi _ _ = []
+
+----------------------------------------------------------------------------
+
+{-6. todosLosCaminos :: Mapa -> [[Dir]]
 Devuelve todos lo caminos en el mapa.-}
