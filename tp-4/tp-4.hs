@@ -89,7 +89,12 @@ data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
     deriving Show
 
 mapa1 :: Mapa 
-mapa1 = Bifurcacion cofre2 (Bifurcacion cofre2 (Fin cofre2) (Fin cofre1)) (Fin cofre2)
+mapa1 = Bifurcacion cofre2 (Bifurcacion cofre2 
+                                (Bifurcacion cofre2 
+                                    (Fin cofre2) (Fin cofre1)) 
+                                (Fin cofre2)
+                            )
+                           (Fin cofre2)
 
 cofre1 :: Cofre 
 cofre1 = Cofre [piedra, espada]
@@ -141,11 +146,45 @@ esIzquierda :: Dir -> Bool
 esIzquierda Izq = True 
 esIzquierda _   = False
 
-{-3. caminoAlTesoro :: Mapa -> [Dir]
-Indica el camino al tesoro. Precondición: existe un tesoro y es único.
-4. caminoDeLaRamaMasLarga :: Mapa -> [Dir]
-Indica el camino de la rama más larga.
-5. tesorosPorNivel :: Mapa -> [[Objeto]]
+
+----------------------------------------------------------------------------
+
+--3. 
+caminoAlTesoro :: Mapa -> [Dir]
+--Indica el camino al tesoro. 
+--Precondición: existe un tesoro y es único.
+caminoAlTesoro (Fin _) = []
+caminoAlTesoro (Bifurcacion c m1 m2) = if esCofreConTesoro c 
+                                       then [] 
+                                       else dirAlTesoro m1 ++ caminoAlTesoro m1 ++ caminoAlTesoro m2
+
+dirAlTesoro :: Mapa -> [Dir]
+dirAlTesoro m = if hayTesoro m 
+                then [Izq] 
+                else [Der]
+
+
+--------------------------------------------------------------------------------
+
+--4. 
+caminoDeLaRamaMasLarga :: Mapa -> [Dir]
+--Indica el camino de la rama más larga.
+caminoDeLaRamaMasLarga (Fin _) = []
+caminoDeLaRamaMasLarga (Bifurcacion _ m1 m2) = dirCaminoMasLargo m1 m2 
+                                               ++ caminoDeLaRamaMasLarga m1
+                                               ++ caminoDeLaRamaMasLarga m2
+
+dirCaminoMasLargo :: Mapa -> Mapa -> [Dir]  
+dirCaminoMasLargo m1 m2 = if heightT m1 > heightT m2      
+                          then [Izq]      
+                          else [Der] 
+
+heightT :: Mapa -> Int 
+heightT (Fin _) = 0            
+heightT (Bifurcacion _ m1 m2) = 1 + heightT m1 + heightT m2            
+                                               
+
+{-5. tesorosPorNivel :: Mapa -> [[Objeto]]
 Devuelve los tesoros separados por nivel en el árbol.
 6. todosLosCaminos :: Mapa -> [[Dir]]
 Devuelve todos lo caminos en el mapa.-}

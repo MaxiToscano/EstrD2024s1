@@ -121,6 +121,7 @@ hayTesoroEn n (Nada c) = hayTesoroEn (n-1) c
 hayTesoroEn n (Cofre _ c) = hayTesoroEn (n-1) c
 
 esCofreConTesoro :: Camino -> Bool
+--Indica si el camino dado es un Cofre que contiene tesoros.
 esCofreConTesoro (Cofre obs _) = hayTesoroEnObjetos obs
 esCofreConTesoro _             = False  
 
@@ -134,6 +135,8 @@ hayTesoroEn' 0 (Cofre obs c) = hayTesoroEnObjetos obs
 hayTesoroEn' n c             = hayTesoroEn (n-1) (caminoInterior c)        
 
 caminoInterior :: Camino -> Camino
+--Dado un Camino devuelve el camino interno
+--PRECOND: el camino no es Fin
 caminoInterior Fin = error "No puede ser Fin"
 caminoInterior (Nada c) = c
 caminoInterior (Cofre _ c) = c
@@ -146,42 +149,39 @@ alMenosNTesoros :: Int -> Camino -> Bool
 alMenosNTesoros n c = cantDeTesorosEn c >= n
 
 cantDeTesorosEn :: Camino -> Int 
+--Dado un Camnino devuelve la cantidad de tesoros que contiene.
 cantDeTesorosEn Fin = 0
 cantDeTesorosEn (Nada c) = cantDeTesorosEn c 
 cantDeTesorosEn (Cofre obs c) = cuantosSonTesoros obs + cantDeTesorosEn c
 
 cuantosSonTesoros :: [Objeto] -> Int 
+--Dada una lista de Objetos indica cuantos de ellos son Tesoros.
 cuantosSonTesoros [] = 0
 cuantosSonTesoros (ob:obs) = unoSi (esTesoro ob) + cuantosSonTesoros obs
 
 -----------------------------------------------------------------------------------------------
 
---(desafío) COMPLETAR
---cantTesorosEntre :: Int -> Int -> Camino -> Int
+--(desafío) 
+cantTesorosEntre :: Int -> Int -> Camino -> Int
 {-Dado un rango de pasos, indica la cantidad de tesoros que hay en ese rango. Por ejemplo, si
 el rango es 3 y 5, indica la cantidad de tesoros que hay entre hacer 3 pasos y hacer 5. Están
 incluidos tanto 3 como 5 en el resultado.-}
---cantTesorosEntre n m c = 
+--PRECOND: n < m
+cantTesorosEntre n m c = cantDeTesorosDesde n (caminoHasta (m+1) c)
 
 cantDeTesorosDesde :: Int -> Camino -> Int 
+--Dados un numero de pasos y un Camino indica la cantidad de tesoros que hay a partir de esa cantidad de pasos.
 cantDeTesorosDesde _ Fin = 0
 cantDeTesorosDesde 0 (Nada c) = cantDeTesorosEn c
 cantDeTesorosDesde 0 (Cofre obs c) = cuantosSonTesoros obs + cantDeTesorosEn c
-cantDeTesorosDesde n cam = cantDeTesorosDesde (n-1) (caminoInterior cam)
+cantDeTesorosDesde n c = cantDeTesorosDesde (n-1) (caminoInterior c)
 
-cantDeTesorosHasta :: Int -> Camino -> Int
-cantDeTesorosHasta _ Fin = 0
-cantDeTesorosHasta 0 (Nada _) = 0
-cantDeTesorosHasta 0 (Cofre obs _) = cuantosSonTesoros obs 
-cantDeTesorosHasta n (Nada c) = cantDeTesorosHasta (n-1) c
-cantDeTesorosHasta n (Cofre obs c) = cantDeTesorosHasta (n-1) c + cuantosSonTesoros obs 
-
-caminoDesde :: Int -> Camino -> Camino
-caminoDesde _ Fin = Fin
-caminoDesde 0 (Nada c) = c 
-caminoDesde 0 (Cofre _ c) = c
-caminoDesde n (Nada c) = caminoDesde (n-1) c
-caminoDesde n (Cofre _ c) = caminoDesde (n-1) c
+caminoHasta :: Int -> Camino -> Camino
+--Dada una cantidad de pasos y un Camino, devuelve el Camino recorrido hasta esa cantidad de pasos.
+caminoHasta _ Fin = Fin
+caminoHasta 0 _ = Fin
+caminoHasta n (Nada c) = Nada (caminoHasta (n-1) c)
+caminoHasta n (Cofre obs c) = Cofre obs (caminoHasta (n-1) c)
 
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -213,11 +213,13 @@ sizeT :: Tree a -> Int
 sizeT EmptyT = 0
 sizeT (NodeT _ t1 t2) = 1 + sizeT t1 + sizeT t2
 
+
 --3. 
 mapDobleT :: Tree Int -> Tree Int
 --Dado un árbol de enteros devuelve un árbol con el doble de cada número.
 mapDobleT EmptyT = EmptyT
 mapDobleT (NodeT n t1 t2) = NodeT (n*2) (mapDobleT t1) (mapDobleT t2)
+
 
 --4. 
 perteneceT :: Eq a => a -> Tree a -> Bool
@@ -225,17 +227,20 @@ perteneceT :: Eq a => a -> Tree a -> Bool
 perteneceT _ EmptyT = False
 perteneceT e (NodeT e1 t1 t2) = (e==e1) || perteneceT e t1 || perteneceT e t2
 
+
 --5. 
 aparicionesT :: Eq a => a -> Tree a -> Int
 --Dados un elemento e y un árbol binario devuelve la cantidad de elementos del árbol que son iguales a e.
 aparicionesT _ EmptyT = 0
 aparicionesT e (NodeT e1 t1 t2) = unoSi (e==e1) + aparicionesT e t1 + aparicionesT e t2
 
+
 --6. 
 leaves :: Tree a -> [a]
 --Dado un árbol devuelve los elementos que se encuentran en sus hojas.
 leaves EmptyT = []
 leaves (NodeT e t1 t2) = e:[] ++ leaves t1 ++ leaves t2
+
 
 --7. 
 heightT :: Tree a -> Int
@@ -251,6 +256,7 @@ mirrorT :: Tree a -> Tree a
 --Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho en cada nodo del árbol.
 mirrorT EmptyT = EmptyT
 mirrorT (NodeT e t1 t2) = NodeT e (mirrorT t2) (mirrorT t1)
+
 
 --9. 
 toList :: Tree a -> [a]
