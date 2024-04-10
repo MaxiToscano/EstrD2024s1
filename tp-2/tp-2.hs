@@ -388,8 +388,14 @@ proyectosDeRoleSinRepetir rs = proyectosSinRepetir (proyectosDeRoles rs)
 proyectosSinRepetir :: [Proyecto] -> [Proyecto]
 --Dada una lista de proyectos, devuelve la lista sin los elementos que se repiten
 proyectosSinRepetir [] = []
-proyectosSinRepetir (p:ps) = agregarSi p (not (estaProyectoEnLaLista p ps)) ++ (proyectosSinRepetir ps)
+proyectosSinRepetir (p:ps) = agregarProyectoSiNoEsta p (proyectosSinRepetir ps)
 
+agregarProyectoSiNoEsta :: Proyecto -> [Proyecto] -> [Proyecto]
+agregarProyectoSiNoEsta p [] = p:[]
+agregarProyectoSiNoEsta p ps = if estaProyectoEnLaLista p ps
+                                then ps
+                                else p:ps
+ 
 estaProyectoEnLaLista :: Proyecto -> [Proyecto] -> Bool
 --Dado un Proyecto y una lista de Proyectos, indica si el Proyecto dado se encuentra en la lista.
 estaProyectoEnLaLista p [] = False
