@@ -371,8 +371,8 @@ mark  = Developer  Senior     baseDeDatos
 jeff  = Management SemiSenior baseDeDatos
 elon  = Developer  Junior     paginaWeb
 
-multiEmpresa :: Empresa
-multiEmpresa = ConsEmpresa [bill, steve, mark, jeff, elon]
+empresa :: Empresa
+empresa = ConsEmpresa [bill, steve, mark, jeff, elon]
 
 --Definir las siguientes funciones sobre el tipo Empresa:
 
@@ -433,8 +433,14 @@ desarrolladoresSeniorQueTrabajanEn (r:rs) pys = agregarSi r (esDesarrolladorSeni
                                     
 esDesarrolladorSenior :: Rol -> Bool
 --Indica si el Rol dado es Developer Senior
-esDesarrolladorSenior (Developer Senior _) = True
-esDesarrolladorSenior _                    = False
+esDesarrolladorSenior (Developer s _) = esSeniority Senior s
+esDesarrolladorSenior _               = False
+
+esSeniority :: Seniority -> Seniority -> Bool
+esSeniority Junior Junior = True 
+esSeniority SemiSenior SemiSenior = True 
+esSeniority Senior Senior = True 
+esSeniority _ _ = False
 
 trabajaEnAlgunProyecto :: Rol -> [Proyecto] -> Bool
 --Indica si el Rol dado trabaja en algún Proyecto de la lista dada.
