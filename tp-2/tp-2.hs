@@ -418,18 +418,18 @@ nombreDelproyecto (ConsProyecto n) = n
 losDevSenior :: Empresa -> [Proyecto] -> Int
 --Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen además a los proyectos dados por parámetro.
 losDevSenior _ [] = 0
-losDevSenior e pys = longitud (desarrolladoresSeniorQueTrabajanEn (rolesdeEmpresa e) pys)
+losDevSenior e pys = cantDeDesarrolladoresSeniorQueTrabajanEn (rolesdeEmpresa e) pys
 
 rolesdeEmpresa :: Empresa -> [Rol]
 --Devuelve una lista de Roles de la Empresa dada.
 rolesdeEmpresa (ConsEmpresa rs) = rs
 
-desarrolladoresSeniorQueTrabajanEn :: [Rol] -> [Proyecto] -> [Rol]
+cantDeDesarrolladoresSeniorQueTrabajanEn :: [Rol] -> [Proyecto] -> Int
 --Dada una lista de Roles y una lista de Proyectos, devuelve una lista de los Roles que sean Developer Senior que trabajen en los Proyectos dados.
-desarrolladoresSeniorQueTrabajanEn [] _ = []
-desarrolladoresSeniorQueTrabajanEn _ [] = []
-desarrolladoresSeniorQueTrabajanEn (r:rs) pys = agregarSi r (esDesarrolladorSenior r && trabajaEnAlgunProyecto r pys) 
-                                                  ++ desarrolladoresSeniorQueTrabajanEn rs pys
+cantDeDesarrolladoresSeniorQueTrabajanEn [] _ = 0
+cantDeDesarrolladoresSeniorQueTrabajanEn _ [] = 0
+cantDeDesarrolladoresSeniorQueTrabajanEn (r:rs) pys = unoSi (esDesarrolladorSenior r && trabajaEnAlgunProyecto r pys) 
+                                                      + cantDeDesarrolladoresSeniorQueTrabajanEn rs pys
                                     
 esDesarrolladorSenior :: Rol -> Bool
 --Indica si el Rol dado es Developer Senior
