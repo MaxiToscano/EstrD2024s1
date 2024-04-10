@@ -13,7 +13,7 @@ data Celda = Bolita Color Celda | CeldaVacia
     deriving Show
 
 celda1 :: Celda 
-celda1 = Bolita Azul (Bolita Azul (Bolita Rojo (CeldaVacia)))
+celda1 = Bolita Azul (Bolita Azul (Bolita Azul (Bolita Rojo (CeldaVacia))))
 
 
 {-En dicha representación, la cantidad de apariciones de un determinado color denota la cantidad
@@ -48,6 +48,7 @@ poner c ce = Bolita c ce
 sacar :: Color -> Celda -> Celda
 --Dado un color y una celda, quita una bolita de dicho color de la celda. 
 --Nota: a diferencia de Gobstones, esta función es total.
+sacar _ CeldaVacia = CeldaVacia
 sacar c (Bolita co ce) = if sonColoresIguales c co
                          then ce
                          else Bolita co (sacar c ce)
@@ -239,7 +240,8 @@ aparicionesT e (NodeT e1 t1 t2) = unoSi (e==e1) + aparicionesT e t1 + aparicione
 leaves :: Tree a -> [a]
 --Dado un árbol devuelve los elementos que se encuentran en sus hojas.
 leaves EmptyT = []
-leaves (NodeT e t1 t2) = e:[] ++ leaves t1 ++ leaves t2
+leaves (NodeT e EmptyT EmptyT) = [e]
+leaves (NodeT e t1 t2) = leaves t1 ++ leaves t2
 
 
 --7. 
@@ -293,10 +295,22 @@ juntarNiveles (xs:xss) (ys:yss) = (xs ++ ys) : juntarNiveles xss yss
 ramaMasLarga :: Tree a -> [a]
 --Devuelve los elementos de la rama más larga del árbol
 ramaMasLarga EmptyT = []
-ramaMasLarga (NodeT e t1 t2) = if sizeT t1 > sizeT t2 
-                                then e : leaves t1 
-                                else e : leaves t2
-                            
+ramaMasLarga (NodeT e t1 t2) = e : laMasLarga (ramaMasLarga t1) (ramaMasLarga t2)
+
+laMasLarga :: [a] -> [a] -> [a]
+laMasLarga xs ys = if length xs > length ys
+                   then xs 
+                   else ys       
+
+
+ramaMasLarga' :: Tree a -> [a]
+--Devuelve los elementos de la rama más larga del árbol
+ramaMasLarga' EmptyT = []
+ramaMasLarga' (NodeT e t1 t2) = if sizeT t1 > sizeT t2 
+                                then e : ramaMasLarga t1
+                                else e : ramaMasLarga t2
+
+
 
 --13. 
 todosLosCaminos :: Tree a -> [[a]]
