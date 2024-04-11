@@ -209,11 +209,11 @@ singularSi _ _ = []
 
 ----------------------------------------------------------------------------
 
---6. COMPLETAR
+--6. 
 todosLosCaminos :: Mapa -> [[Dir]]
 --Devuelve todos lo caminos en el mapa.
-todosLosCaminos (Fin _) = []
-todosLosCaminos (Bifurcacion _ m1 m2) = [] : consACada Izq (todosLosCaminos m1) ++ consACada Der (todosLosCaminos m2)
+todosLosCaminos (Fin _) = [[]]
+todosLosCaminos (Bifurcacion _ m1 m2) = consACada Izq (todosLosCaminos m1) ++ consACada Der (todosLosCaminos m2)
 
 consACada :: a -> [[a]] -> [[a]]
 consACada x [] = []
@@ -221,17 +221,6 @@ consACada x (xs:xss) = (x:xs) : consACada x xss
 
 
 -- /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-ordenar :: Ord a => [a] -> [a]
-ordenar []     = []
-ordenar (x:xs) = insert x (ordenar xs)
-
-insert :: Ord a => a -> [a] -> [a]
--- PRECOND: la lista dada está ordenada
-insert x []     = x : []
-insert x (y:ys) = if x <= y
-                   then x : y : ys
-                   else y : insert x ys
 
 
 --PUNTO 3: Nave Espacial
@@ -259,6 +248,16 @@ data Nave = N (Tree Sector)
     deriving Show
 
 
+nave1 = N (NodeT (S "a" [(Motor 2), (Almacen [Comida, Oxigeno])] ["t1", "t2", "t3"])
+            (NodeT (S "b" [LanzaTorpedos, (Motor 2), (Almacen [Torpedo, Combustible])] ["t4", "t5", "t6"])
+                (EmptyT)
+                (EmptyT)
+            )
+            (NodeT (S "c" [LanzaTorpedos, (Motor 4), (Almacen [Comida, Oxigeno, Torpedo, Combustible])] ["t7", "t8", "t9", "t10"])
+                (EmptyT)
+                (EmptyT)
+            )
+          )
 
 --Implementar las siguientes funciones utilizando recursión estructural:
 
@@ -290,7 +289,7 @@ poderDePropulsionT (NodeT s t1 t2) = poderDePropulsionEn (componentesDelSector s
 
 poderDePropulsionEn :: [Componente] -> Int
 poderDePropulsionEn [] = 0
-poderDePropulsionEn (c:cs) = valorSi (poderDelMotor c) (esMotor c) + poderDePropulsionEn cs
+poderDePropulsionEn (c:cs) = poderDelMotor c + poderDePropulsionEn cs
 
 componentesDelSector :: Sector -> [Componente]
 componentesDelSector (S _ cs _)  = cs
@@ -299,22 +298,36 @@ poderDelMotor :: Componente -> Int
 poderDelMotor (Motor n) = n
 poderDelMotor _         = 0
 
-esMotor :: Componente -> Bool
-esMotor (Motor _) =  True
-esMotor _         =  False
-
-valorSi :: Int -> Bool -> Int
-valorSi n True = n   
-valorSi _ _    = 0
-
 ----------------------------------------------------------------------------------------------
 
-{-3. barriles :: Nave -> [Barril]
-Propósito: Devuelve todos los barriles de la nave.
-4. agregarASector :: [Componente] -> SectorId -> Nave -> Nave
-Propósito: Añade una lista de componentes a un sector de la nave.
-Nota: ese sector puede no existir, en cuyo caso no añade componentes.
-5. asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+--3. 
+barriles :: Nave -> [Barril]
+--Propósito: Devuelve todos los barriles de la nave.
+barriles (N t) = barrilesT t
+
+barrilesT :: Tree Sector -> [Barril]
+barrilesT EmptyT = []
+barrilesT (NodeT s t1 t2) = barrilesEnComps (componentesDelSector s) ++ barrilesT t1 ++ barrilesT t2
+
+barrilesEnComps :: [Componente] -> [Barril]
+barrilesEnComps [] = []
+barrilesEnComps (c:cs) = barrilesDeAlmacen c ++ barrilesEnComps cs
+
+barrilesDeAlmacen :: Componente -> [Barril]
+barrilesDeAlmacen (Almacen bs) = bs 
+barrilesDeAlmacen _ = []
+
+-------------------------------------------------------------------------------------------------
+
+--4. 
+agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+--Propósito: Añade una lista de componentes a un sector de la nave.
+--Nota: ese sector puede no existir, en cuyo caso no añade componentes.
+agregarASector [] _ n = n
+
+
+
+{-5. asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
 Propósito: Incorpora un tripulante a una lista de sectores de la nave.
 Precondición: Todos los id de la lista existen en la nave.
 6. sectoresAsignados :: Tripulante -> Nave -> [SectorId]
