@@ -324,11 +324,43 @@ agregarASector :: [Componente] -> SectorId -> Nave -> Nave
 --Propósito: Añade una lista de componentes a un sector de la nave.
 --Nota: ese sector puede no existir, en cuyo caso no añade componentes.
 agregarASector [] _ n = n
+agregarASector cs idS (N t) = N (agregarASectorT cs idS t)
 
+agregarASectorT :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
+agregarASectorT _ _ EmptyT = EmptyT
+agregarASectorT cs idS (NodeT s t1 t2) = NodeT (agregarASectorN cs idS s) (agregarASectorT cs idS t1) (agregarASectorT cs idS t2)
 
+agregarASectorN :: [Componente] -> SectorId -> Sector -> Sector
+agregarASectorN cs idS s = if idS == (idSector s) 
+                           then agregarASectorS cs s
+                           else s
 
-{-5. asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
-Propósito: Incorpora un tripulante a una lista de sectores de la nave.
-Precondición: Todos los id de la lista existen en la nave.
-6. sectoresAsignados :: Tripulante -> Nave -> [SectorId]
-Propósito: Devuelve los sectores en donde aparece un tripulante dado.-}
+agregarASectorS :: [Componente] -> Sector -> Sector
+agregarASectorS cs (S id cms ts) = S id (cms ++ cs) ts
+
+-------------------------------------------------------------------------------------------------
+
+--5. 
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+--Propósito: Incorpora un tripulante a una lista de sectores de la nave.
+--Precondición: Todos los id de la lista existen en la nave.
+asignarTripulanteA _ [] n = n
+asignarTripulanteA tp secs (N t) = N (asignarTripulanteAT tp secs t)
+
+asignarTripulanteAT :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+asignarTripulanteAT _ _ EmptyT = EmptyT
+asignarTripulanteAT tp (id:ids) (NodeT s t1 t2) = NodeT (asignarTripulanteAS tp id s) (asignarTripulanteAT tp ids t1) (asignarTripulanteAT tp ids t2)
+
+asignarTripulanteAS :: Tripulante -> SectorId -> Sector -> Sector
+asignarTripulanteAS tp id s = if id == idSector s 
+                              then agregarTripulante tp s
+                              else s
+
+agregarTripulante :: Tripulante -> Sector -> Sector
+agregarTripulante tp (S idS cms tps) = S idS cms (tp:tps)
+
+--------------------------------------------------------------------------------------------------
+
+--6. 
+sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+--Propósito: Devuelve los sectores en donde aparece un tripulante dado.
