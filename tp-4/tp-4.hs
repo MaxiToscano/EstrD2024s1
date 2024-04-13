@@ -91,19 +91,15 @@ data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
 mapa1 :: Mapa 
 mapa1 = Bifurcacion cofre2 (Bifurcacion cofre2 
                                 (Bifurcacion cofre2 
-                                    (Fin cofre2) (Fin cofre1)) 
+                                    (Fin cofre1) (Fin cofre2)) 
                                 (Fin cofre2)
                             )
                            (Fin cofre2)
 
 cofre1 :: Cofre 
-cofre1 = Cofre [piedra, espada]
-cofre2 = Cofre [cuchara, piedra]
+cofre1 = Cofre [Chatarra, Tesoro]
+cofre2 = Cofre [Chatarra, Chatarra]
 
-espada, cuchara, piedra :: Objeto
-espada = Tesoro 
-cuchara = Chatarra
-piedra = Chatarra
 
 --Definir las siguientes operaciones:
 
@@ -128,24 +124,30 @@ esTesoro _      = False
 
 ------------------------------------------------------------------------------
 
---2. 
+--2.
 hayTesoroEn :: [Dir] -> Mapa -> Bool
 --Indica si al final del camino hay un tesoro. 
 --Nota: el final de un camino se representa con una lista vacía de direcciones.
 hayTesoroEn [] m = hayTesoroEnEstaPosicion m
-hayTesoroEn _ (Fin _) = error "no hay camino"
-hayTesoroEn (d:ds) (Bifurcacion _ m1 m2) = if esIzquierda d 
-                                           then hayTesoroEn ds m1
-                                           else hayTesoroEn ds m2
+hayTesoroEn (d:ds) m = hayTesoroEn ds (sigCamino d m)
 
 hayTesoroEnEstaPosicion :: Mapa -> Bool
+--Dado un Mapa, indica si hay un tesoro en la posición actual.
 hayTesoroEnEstaPosicion (Fin c) = esCofreConTesoro c
 hayTesoroEnEstaPosicion (Bifurcacion c _ _) = esCofreConTesoro c
 
-esIzquierda :: Dir -> Bool 
-esIzquierda Izq = True 
-esIzquierda _   = False
+sigCamino :: Dir -> Mapa -> Mapa
+--Dada una Dirección y un Mapa, devuelve el Mapa al avanzar en la Dir dada
+--PRECOND: el mapa no es fin
+sigCamino _ (Fin _) = error "No hay camino"
+sigCamino d (Bifurcacion _ m1 m2) = if esIzq d 
+                                    then m1
+                                    else m2
 
+esIzq :: Dir -> Bool
+--Dadas dos Direcciones, indica si son la misma. 
+esIzq Izq = True 
+esIzq _   = False
 
 ----------------------------------------------------------------------------
 
@@ -156,13 +158,17 @@ caminoAlTesoro :: Mapa -> [Dir]
 caminoAlTesoro (Fin _) = []
 caminoAlTesoro (Bifurcacion c m1 m2) = if esCofreConTesoro c 
                                        then [] 
-                                       else dirAlTesoro m1 ++ caminoAlTesoro m1 ++ caminoAlTesoro m2
+                                       else dirAlTesoro m1 ++ caminoAlTesoro (mapaDelTesoro m1 m2)
 
 dirAlTesoro :: Mapa -> [Dir]
 dirAlTesoro m = if hayTesoro m 
                 then [Izq] 
                 else [Der]
 
+mapaDelTesoro :: Mapa -> Mapa -> Mapa
+mapaDelTesoro m1 m2 = if hayTesoro m1                 
+                      then m1
+                      else m2
 
 --------------------------------------------------------------------------------
 
@@ -361,6 +367,6 @@ agregarTripulante tp (S idS cms tps) = S idS cms (tp:tps)
 
 --------------------------------------------------------------------------------------------------
 
---6. 
+{---6. 
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
---Propósito: Devuelve los sectores en donde aparece un tripulante dado.
+--Propósito: Devuelve los sectores en donde aparece un tripulante dado.-}
