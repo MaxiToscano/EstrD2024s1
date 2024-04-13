@@ -69,6 +69,7 @@ opuesto Sur = Norte
 opuesto Este = Oeste
 opuesto Oeste = Este
 
+
 --b) 
 iguales :: Dir -> Dir -> Bool
 --Dadas dos direcciones, indica si son la misma. Nota: utilizar pattern matching y no ==.
@@ -118,12 +119,16 @@ primerDia = Lunes
 ultimoDia :: DiaDeSemana
 ultimoDia = Domingo
 
+-- =============================================================================================
+
 --b) 
 empiezaConM :: DiaDeSemana -> Bool
 --Dado un día de la semana indica si comienza con la letra M.
 empiezaConM Martes = True
 empiezaConM Miercoles = True
 empiezaConM d = False
+
+-- =============================================================================================
 
 --c) 
 vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
@@ -132,7 +137,6 @@ la calidad de la solución respecto de la cantidad de casos analizados (entre lo
 analizados en esta y cualquier subtarea, deberían ser no más de 9 casos).-}
 vieneDespues d1 d2 = ordenDia d1 > ordenDia d2 
                          
-
 ordenDia :: DiaDeSemana -> Int
 ordenDia Lunes = 1
 ordenDia Martes = 2
@@ -141,6 +145,8 @@ ordenDia Jueves = 4
 ordenDia Viernes = 5
 ordenDia Sabado = 6
 ordenDia Domingo = 7
+
+-- =============================================================================================
 
 --d) 
 estaEnElMedio :: DiaDeSemana -> Bool
@@ -207,6 +213,8 @@ cosme = P "cosme" 30
 fulanito :: Persona
 fulanito = P "fulanito" 20
 
+-- =============================================================================================
+
 nombre :: Persona -> String
 --Devuelve el nombre de una persona
 nombre (P n e) = n
@@ -215,17 +223,25 @@ nombre' :: Persona -> String
 --Devuelve el nombre de una persona
 nombre' p = nombre p
 
+-- =============================================================================================
+
 edad :: Persona -> Int
 --Devuelve la edad de una persona
 edad (P n e) = e
+
+-- =============================================================================================
 
 crecer :: Persona -> Persona
 --Aumenta en uno la edad de la persona.
 crecer (P n e) = P n (e+1)
 
+-- =============================================================================================
+
 cambioDeNombre :: String -> Persona -> Persona
 --Dados un nombre y una persona, devuelve una persona con la edad de la persona y el nuevo nombre.
 cambioDeNombre newN (P n e) = (P newN e)
+
+-- =============================================================================================
 
 esMayorQueLaOtra :: Persona -> Persona -> Bool
 --Dadas dos personas indica si la primera es mayor que la segunda.
@@ -285,7 +301,7 @@ pokemonTipo :: Pokemon -> TipoDePokemon
 --dado un pokemon devuelve su tipo
 pokemonTipo (PM tp e) = tp
 
--- //////////////////////////////////////////////////////////////////////////////////////////
+-- =============================================================================================
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 --Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
@@ -307,7 +323,7 @@ daUnoSiCumple :: Bool -> Int
 daUnoSiCumple True = 1
 daUnoSiCumple False = 0
 
--- //////////////////////////////////////////////////////////////////////////////////////////
+-- =============================================================================================
 
 juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
 --Dado un par de entrenadores, devuelve a sus Pokémon en una lista.
@@ -371,6 +387,7 @@ estaVacia' :: [a] -> Bool
 estaVacia' [] = True
 estaVacia' _ = False
 
+-- =============================================================================================
 
 --b) 
 elPrimero :: [a] -> a
@@ -380,6 +397,7 @@ elPrimero (x:_) = x
 elPrimero [] = error "Es una lista vacia" 
 --Definida en Haskell como head.
 
+-- =============================================================================================
 
 --c)
 sinElPrimero :: [a] -> [a]
@@ -389,7 +407,8 @@ sinElPrimero (_:xs) = xs
 sinElPrimero [] = error "Es una lista vacia" 
 --Definida en Haskell como tail.
 
-
+-- =============================================================================================
+    
 --d)
 splitHead :: [a] -> (a, [a])
 {-Dada una lista devuelve un par, donde el primer componente es el primer elemento de la
