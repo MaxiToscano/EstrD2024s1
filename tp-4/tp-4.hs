@@ -13,7 +13,7 @@ pizza1, pizza2:: Pizza
 pizza1 = Capa (Aceitunas 8) (Capa Jamon (Capa Queso (Capa Salsa Prepizza)))
 pizza2 = Capa Queso (Capa Salsa Prepizza)
 
---------------------------------------------------------------------------------------------------
+-- =============================================================================================
 
 --Definir las siguientes funciones:
 
@@ -22,14 +22,14 @@ cantidadDeCapas :: Pizza -> Int
 cantidadDeCapas Prepizza = 0
 cantidadDeCapas (Capa _ p) = 1 + cantidadDeCapas p
 
--------------------------------------------------------
+-- =============================================================================================
 
 armarPizza :: [Ingrediente] -> Pizza
 --Dada una lista de ingredientes construye una pizza
 armarPizza [] = Prepizza
 armarPizza (i:is) = Capa i (armarPizza is)
 
-------------------------------------------------------
+-- =============================================================================================
 
 sacarJamon :: Pizza -> Pizza
 --Le saca los ingredientes que sean jamón a la pizza
@@ -45,7 +45,7 @@ esIngrediente Jamon Jamon = True
 esIngrediente (Aceitunas _) (Aceitunas _) = True
 esIngrediente _ _ = False
 
----------------------------------------------------------
+-- =============================================================================================
 
 tieneSoloSalsaYQueso :: Pizza -> Bool
 --Dice si una pizza tiene solamente salsa y queso, o sea no tiene de otros ingredientes. 
@@ -53,7 +53,7 @@ tieneSoloSalsaYQueso :: Pizza -> Bool
 tieneSoloSalsaYQueso Prepizza = True
 tieneSoloSalsaYQueso (Capa i p) = (esIngrediente Salsa i || esIngrediente Queso i) && tieneSoloSalsaYQueso p
 
----------------------------------------------------------
+-- =============================================================================================
                                  
 duplicarAceitunas :: Pizza -> Pizza
 --Recorre cada ingrediente y si es aceitunas duplica su cantidad
@@ -61,10 +61,11 @@ duplicarAceitunas Prepizza = Prepizza
 duplicarAceitunas (Capa i p) = Capa (dobleDeAceitunas i) p
 
 dobleDeAceitunas :: Ingrediente -> Ingrediente
+--si el ingrediente dado es Aceitunas, dupilca su cantidad
 dobleDeAceitunas (Aceitunas n) = Aceitunas (n*2)
 dobleDeAceitunas i = i
 
-------------------------------------------------------------
+-- =============================================================================================
 
 cantCapasPorPizza :: [Pizza] -> [(Int, Pizza)]
 {-Dada una lista de pizzas devuelve un par donde la primera componente es la cantidad de
@@ -110,6 +111,7 @@ hayTesoro (Fin c) = esCofreConTesoro c
 hayTesoro (Bifurcacion c m1 m2) = esCofreConTesoro c || hayTesoro m1 || hayTesoro m2
 
 esCofreConTesoro :: Cofre -> Bool
+--Indica si en el Cofre dado hay tesoros.
 esCofreConTesoro (Cofre obs) = hayTesoroEnObjetos obs
 
 hayTesoroEnObjetos :: [Objeto] -> Bool
@@ -122,7 +124,7 @@ esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True
 esTesoro _      = False
 
-------------------------------------------------------------------------------
+-- =============================================================================================
 
 --2.
 hayTesoroEn :: [Dir] -> Mapa -> Bool
@@ -145,11 +147,10 @@ sigCamino d (Bifurcacion _ m1 m2) = if esIzq d
                                     else m2
 
 esIzq :: Dir -> Bool
---Dadas dos Direcciones, indica si son la misma. 
 esIzq Izq = True 
 esIzq _   = False
 
-----------------------------------------------------------------------------
+-- =============================================================================================
 
 --3. 
 caminoAlTesoro :: Mapa -> [Dir]
@@ -170,7 +171,7 @@ mapaDelTesoro m1 m2 = if hayTesoro m1
                       then m1
                       else m2
 
---------------------------------------------------------------------------------
+-- =============================================================================================
 
 --4. 
 caminoDeLaRamaMasLarga :: Mapa -> [Dir]
@@ -189,7 +190,7 @@ heightT :: Mapa -> Int
 heightT (Fin _) = 0            
 heightT (Bifurcacion _ m1 m2) = 1 + heightT m1 + heightT m2            
                                                
-------------------------------------------------------------------------------
+-- =============================================================================================
 
 --5. 
 tesorosPorNivel :: Mapa -> [[Objeto]]
@@ -213,7 +214,7 @@ singularSi :: a -> Bool -> [a]
 singularSi a True = [a]
 singularSi _ _ = []
 
-----------------------------------------------------------------------------
+-- =============================================================================================
 
 --6. 
 todosLosCaminos :: Mapa -> [[Dir]]
@@ -255,11 +256,11 @@ data Nave = N (Tree Sector)
 
 
 nave1 = N (NodeT (S "a" [(Motor 2), (Almacen [Comida, Oxigeno])] ["t1", "t2", "t3"])
-            (NodeT (S "b" [LanzaTorpedos, (Motor 2), (Almacen [Torpedo, Combustible])] ["t4", "t5", "t6"])
+            (NodeT (S "b" [LanzaTorpedos, (Motor 2), (Almacen [Torpedo, Combustible])] ["t4", "t5", "t6", "t7"])
                 (EmptyT)
                 (EmptyT)
             )
-            (NodeT (S "c" [LanzaTorpedos, (Motor 4), (Almacen [Comida, Oxigeno, Torpedo, Combustible])] ["t7", "t8", "t9", "t10"])
+            (NodeT (S "c" [LanzaTorpedos, (Motor 4), (Almacen [Comida, Oxigeno, Torpedo, Combustible])] ["t1", "t7", "t8", "t9", "t10"])
                 (EmptyT)
                 (EmptyT)
             )
@@ -275,13 +276,13 @@ sectores (N t) = sectoresEn t
 
 sectoresEn :: Tree Sector -> [SectorId]
 sectoresEn EmptyT  = []
-sectoresEn (NodeT s t1 t2) = [idSector s] ++ sectoresEn t1 ++ sectoresEn t2
+sectoresEn (NodeT s ti td) = [idSector s] ++ sectoresEn ti ++ sectoresEn td
 
 idSector :: Sector -> SectorId
 idSector (S id _ _) = id
 
 
----------------------------------------------------------------------------------------------
+-- =============================================================================================
 
 --2. 
 poderDePropulsion :: Nave -> Int
@@ -291,7 +292,7 @@ poderDePropulsion (N t) = poderDePropulsionT t
 
 poderDePropulsionT :: Tree Sector -> Int
 poderDePropulsionT EmptyT = 0
-poderDePropulsionT (NodeT s t1 t2) = poderDePropulsionEn (componentesDelSector s) + poderDePropulsionT t1 + poderDePropulsionT t2
+poderDePropulsionT (NodeT s ti td) = poderDePropulsionEn (componentesDelSector s) + poderDePropulsionT ti + poderDePropulsionT td
 
 poderDePropulsionEn :: [Componente] -> Int
 poderDePropulsionEn [] = 0
@@ -304,7 +305,7 @@ poderDelMotor :: Componente -> Int
 poderDelMotor (Motor n) = n
 poderDelMotor _         = 0
 
-----------------------------------------------------------------------------------------------
+-- =============================================================================================
 
 --3. 
 barriles :: Nave -> [Barril]
@@ -313,7 +314,7 @@ barriles (N t) = barrilesT t
 
 barrilesT :: Tree Sector -> [Barril]
 barrilesT EmptyT = []
-barrilesT (NodeT s t1 t2) = barrilesEnComps (componentesDelSector s) ++ barrilesT t1 ++ barrilesT t2
+barrilesT (NodeT s ti td) = barrilesEnComps (componentesDelSector s) ++ barrilesT ti ++ barrilesT td
 
 barrilesEnComps :: [Componente] -> [Barril]
 barrilesEnComps [] = []
@@ -323,7 +324,7 @@ barrilesDeAlmacen :: Componente -> [Barril]
 barrilesDeAlmacen (Almacen bs) = bs 
 barrilesDeAlmacen _ = []
 
--------------------------------------------------------------------------------------------------
+-- =============================================================================================
 
 --4. 
 agregarASector :: [Componente] -> SectorId -> Nave -> Nave
@@ -334,7 +335,7 @@ agregarASector cs idS (N t) = N (agregarASectorT cs idS t)
 
 agregarASectorT :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
 agregarASectorT _ _ EmptyT = EmptyT
-agregarASectorT cs idS (NodeT s t1 t2) = NodeT (agregarASectorN cs idS s) (agregarASectorT cs idS t1) (agregarASectorT cs idS t2)
+agregarASectorT cs idS (NodeT s ti td) = NodeT (agregarASectorN cs idS s) (agregarASectorT cs idS ti) (agregarASectorT cs idS td)
 
 agregarASectorN :: [Componente] -> SectorId -> Sector -> Sector
 agregarASectorN cs idS s = if idS == (idSector s) 
@@ -344,7 +345,7 @@ agregarASectorN cs idS s = if idS == (idSector s)
 agregarASectorS :: [Componente] -> Sector -> Sector
 agregarASectorS cs (S id cms ts) = S id (cms ++ cs) ts
 
--------------------------------------------------------------------------------------------------
+-- =============================================================================================
 
 --5. 
 asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
@@ -355,7 +356,7 @@ asignarTripulanteA tp secs (N t) = N (asignarTripulanteAT tp secs t)
 
 asignarTripulanteAT :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
 asignarTripulanteAT _ _ EmptyT = EmptyT
-asignarTripulanteAT tp (id:ids) (NodeT s t1 t2) = NodeT (asignarTripulanteAS tp id s) (asignarTripulanteAT tp ids t1) (asignarTripulanteAT tp ids t2)
+asignarTripulanteAT tp (id:ids) (NodeT s ti td) = NodeT (asignarTripulanteAS tp id s) (asignarTripulanteAT tp ids ti) (asignarTripulanteAT tp ids td)
 
 asignarTripulanteAS :: Tripulante -> SectorId -> Sector -> Sector
 asignarTripulanteAS tp id s = if id == idSector s 
@@ -365,8 +366,163 @@ asignarTripulanteAS tp id s = if id == idSector s
 agregarTripulante :: Tripulante -> Sector -> Sector
 agregarTripulante tp (S idS cms tps) = S idS cms (tp:tps)
 
---------------------------------------------------------------------------------------------------
+-- =============================================================================================
 
-{---6. 
+--6. 
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
---Propósito: Devuelve los sectores en donde aparece un tripulante dado.-}
+--Propósito: Devuelve los sectores en donde aparece un tripulante dado.
+sectoresAsignados tp (N t) = sectoresAsignadosT tp t 
+
+sectoresAsignadosT :: Tripulante -> Tree Sector -> [SectorId]
+sectoresAsignadosT _ EmptyT = []
+sectoresAsignadosT tp (NodeT s ti td) = singularSi (idSector s) (pertenece tp (tripulantesS s)) 
+                                        ++ sectoresAsignadosT tp ti 
+                                        ++ sectoresAsignadosT tp td
+
+pertenece :: Eq a => a -> [a] -> Bool
+--Dados un elemento e y una lista xs devuelve True si existe un elemento en xs que sea igual a e.
+pertenece _ [] = False
+pertenece e (x:xs) = e == x || pertenece e xs
+
+
+tripulantesS :: Sector -> [Tripulante]
+tripulantesS (S _ _ tps) = tps
+
+-- =============================================================================================
+
+--7. 
+tripulantes :: Nave -> [Tripulante]
+--Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
+tripulantes (N t) = sinRepetidos (tripulantesT t)
+
+tripulantesT :: Tree Sector -> [Tripulante]
+tripulantesT EmptyT = []
+tripulantesT (NodeT s ti td) = tripulantesS s ++ tripulantesT ti ++ tripulantesT td
+
+sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos [] = []
+sinRepetidos (x:xs) = if pertenece x xs 
+                      then sinRepetidos xs
+                      else x : sinRepetidos xs
+
+
+-- ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+--Punto 4: Manada de lobos
+
+{-Modelaremos una manada de lobos, como un tipo Manada, que es un simple registro compuesto
+de una estructura llamada Lobo, que representa una jerarquía entre estos animales.
+Los diferentes casos de lobos que forman la jerarquía son los siguientes:
+Los cazadores poseen nombre, una lista de especies de presas cazadas y 3 lobos a cargo.
+Los exploradores poseen nombre, una lista de nombres de territorio explorado (nombres de
+bosques, ríos, etc.), y poseen 2 lobos a cargo.
+Las crías poseen sólo un nombre y no poseen lobos a cargo.-}
+
+--La estructura es la siguiente:
+
+type Presa = String -- nombre de presa
+type Territorio = String -- nombre de territorio
+type Nombre = String -- nombre de lobo
+
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo 
+            | Explorador Nombre [Territorio] Lobo Lobo 
+            | Cria Nombre
+    deriving Show
+
+data Manada = M Lobo
+    deriving Show
+
+--1. Construir un valor de tipo Manada que posea 1 cazador, 2 exploradores y que el resto sean crías. 
+
+manada :: Manada 
+manada = M (Cazador "Hunter" ["conejo","ciervo","liebre"] 
+            (Explorador "e1" ["rio", "bosque"] (Cria "c2") (Cria "c3"))
+            (Explorador "e2" ["pradera", "laguna"] (Cria "c3") (Cria "c4"))
+            (Cria "c1"))
+
+-- =============================================================================================
+
+--Resolver las siguientes funciones utilizando recursión estructural sobre la estructura que corresponda en cada caso:
+
+--2. 
+buenaCaza :: Manada -> Bool
+buenaCaza m = cantDeAlimento m > cantDeCrias m
+
+cantDeAlimento :: Manada -> Int
+cantDeAlimento (M lobo) = cantDeAlimentoL lobo
+
+cantDeAlimentoL :: Lobo -> Int
+cantDeAlimentoL (Cazador _ presas l1 l2 l3) = cantDePresas presas 
+                                            + cantDeAlimentoL l1 
+                                            + cantDeAlimentoL l2 
+                                            + cantDeAlimentoL l3
+cantDeAlimentoL (Explorador _ _ l1 l2)      = cantDeAlimentoL l1 + cantDeAlimentoL l2
+cantDeAlimentoL (Cria _)                    = 0
+
+cantDePresas :: [Presa] -> Int
+cantDePresas ps = length ps
+
+cantDeCrias :: Manada -> Int
+cantDeCrias (M lobo) = cantDeCriasL lobo
+
+cantDeCriasL :: Lobo -> Int
+cantDeCriasL (Cazador _ _ l1 l2 l3) = 0 + cantDeCriasL l1 + cantDeCriasL l2 + cantDeCriasL l3
+cantDeCriasL (Explorador _ _ l1 l2) = 0 + cantDeCriasL l1 + cantDeCriasL l2
+cantDeCriasL (Cria _)               = 1
+
+-- =============================================================================================
+
+--3. 
+elAlfa :: Manada -> (Nombre, Int)
+--Propósito: dada una manada, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas. 
+{-Nota: se considera que los exploradores y crías tienen cero presas cazadas, y que podrían formar 
+  parte del resultado si es que no existen cazadores con más de cero presas.-}
+elAlfa (M lobo) = elAlfaL lobo
+
+elAlfaL :: Lobo -> (Nombre, Int)
+elAlfaL (Cazador n prs l1 l2 l3) = elegirAlfa [(n, cantDePresas prs), elAlfaL l1, elAlfaL l2, elAlfaL l3]
+elAlfaL (Explorador n _ l1 l2) = elegirAlfa [elAlfaL l1, elAlfaL l2, (n, 0)]
+elAlfaL (Cria n) = (n, 0)
+
+elegirAlfa :: [(Nombre, Int)] -> (Nombre, Int)
+--PRECOND: la lista no Nil
+elegirAlfa (np:[]) = np
+elegirAlfa (np:nps) = elegirEntre np (elegirAlfa nps)
+
+elegirEntre :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
+elegirEntre (nom, n) (nom2, n2) = if n >= n2 
+                                  then (nom, n)
+                                  else (nom2, n2)
+
+-- =============================================================================================
+
+--4. 
+losQueExploraron :: Territorio -> Manada -> [Nombre]
+--Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
+losQueExploraron t (M lobo) = losQueExploraronL t lobo 
+
+losQueExploraronL :: Territorio -> Lobo -> [Nombre]
+losQueExploraronL t (Cazador _ _ l1 l2 l3)  = losQueExploraronL t l1 ++ losQueExploraronL t l2 ++ losQueExploraronL t l3
+losQueExploraronL t (Explorador n ts l1 l2) = singularSi n (pertenece t ts) 
+                                            ++ losQueExploraronL t l1 
+                                            ++ losQueExploraronL t l2 
+losQueExploraronL _ (Cria _)                = []
+
+
+-- =============================================================================================
+
+
+--5. 
+--exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+{-Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio
+y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron
+dicho territorio. Los territorios no deben repetirse.-}
+
+
+
+
+{-6. superioresDelCazador :: Nombre -> Manada -> [Nombre]
+Propósito: dado un nombre de cazador y una manada, indica el nombre de todos los
+cazadores que tienen como subordinado al cazador dado (directa o indirectamente).
+Precondición: hay un cazador con dicho nombre y es único.-}
