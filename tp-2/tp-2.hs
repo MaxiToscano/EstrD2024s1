@@ -11,11 +11,13 @@ sumatoria :: [Int] -> Int
 sumatoria [] = 0
 sumatoria (n:ns) = n + sumatoria ns
 
+
 --2. 
 longitud :: [a] -> Int
 --Dada una lista de elementos de algún tipo devuelve el largo de esa lista, es decir, la cantidad de elementos que posee.
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
+
 
 --3. 
 sucesores :: [Int] -> [Int]
@@ -26,17 +28,20 @@ sucesores (n:ns) = sucesor n : sucesores ns
 sucesor :: Int -> Int --función tp-1
 sucesor n = n+1
 
+
 --4. 
 conjuncion :: [Bool] -> Bool
 --Dada una lista de booleanos devuelve True si todos sus elementos son True.
 conjuncion [] = True --la base tiene que ser True porque sino daría False cuando termine la recursión aunque todos los elementos sean True
 conjuncion (b:bs) = b && conjuncion bs
 
+
 --5. 
 disyuncion :: [Bool] -> Bool
 --Dada una lista de booleanos devuelve True si alguno de sus elementos es True.
 disyuncion [] = False --la base tiene que False porque sino daría True cuando termine la recursión aunque todos los elementos sean False
 disyuncion (b:bs) = b || disyuncion bs
+
 
 --6. 
 aplanar :: [[a]] -> [a]
@@ -51,8 +56,8 @@ pertenece :: Eq a => a -> [a] -> Bool
 pertenece _ [] = False
 pertenece e (x:xs) = e == x || pertenece e xs
 
---8. 
 
+--8. 
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []     = 0
 apariciones e (x:xs) = if e == x
@@ -103,12 +108,14 @@ elementos de la segunda a continuación. Definida en Haskell como (++).-}
 agregar [] xs = xs
 agregar (x:xs) ys = x: agregar xs ys
 
+
 --13. 
 reversa :: [a] -> [a]
 --Dada una lista devuelve la lista con los mismos elementos de atrás para adelante. 
 --Definida en Haskell como reverse.
 reversa [] = []
 reversa (x:xs) = reversa xs ++ [x] 
+
 
 --14. 
 zipMaximos :: [Int] -> [Int] -> [Int]
@@ -123,6 +130,7 @@ maxDelPar :: (Int, Int) -> Int --función tp-1
 maxDelPar (n, m) = if n > m 
                     then n 
                     else m
+
 
 --15. 
 elMinimo :: Ord a => [a] -> a
@@ -151,6 +159,7 @@ llegar a 0. Si n es 0 devuelve 1. La función es parcial si n es negativo.-}
 factorial 0 = 1
 factorial n = n * factorial (n-1)
 
+
 --2. 
 cuentaRegresiva :: Int -> [Int]
 {-Dado un número n devuelve una lista cuyos elementos sean los números comprendidos entre
@@ -158,6 +167,7 @@ n y 1 (incluidos). Si el número es inferior a 1, devuelve la lista vacía.-}
 cuentaRegresiva n = if n < 1 
                     then []
                     else n : cuentaRegresiva (n-1)
+
 
 --3. 
 repetir :: Int -> a -> [a]
@@ -183,7 +193,9 @@ sinLosPrimeros 0 xs = xs
 sinLosPrimeros _ [] = []
 sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs
 
+
 -- //////////////////////////////////////////////////////////////////////////////////////////////
+
 
 --PUNTO3: Registros
 
@@ -204,12 +216,14 @@ edad :: Persona -> Int  --función tp-1
 --Devuelve la edad de una persona
 edad (P n e) = e
 
+-- =============================================================================================
 
 mayoresA :: Int -> [Persona] -> [Persona]
 --Dados una edad y una lista de personas devuelve a las personas mayores a esa edad.
 mayoresA _  [] = []
 mayoresA n (p:ps) = agregarSi p (edad p > n) ++ mayoresA n ps
 
+-- =============================================================================================
 
 promedioEdad :: [Persona] -> Int
 --Dada una lista de personas devuelve el promedio de edad entre esas personas. 
@@ -221,6 +235,7 @@ edades :: [Persona] -> [Int]
 edades [] = []
 edades (p:ps) = edad p : edades ps
 
+-- =============================================================================================
 
 elMasViejo :: [Persona] -> Persona
 --Dada una lista de personas devuelve la persona más vieja de la lista. 
@@ -277,7 +292,10 @@ pokemonesDe :: Entrenador -> [Pokemon]
 --dado un entrenador devuelve la lista de sus pokemones
 pokemonesDe (E _ pms) = pms
 
--- ------------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
+
 cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
 --Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
 cantPokemonDe tp (E _ pms) = longitud (pokemonesTipo tp pms)
@@ -300,7 +318,9 @@ pokemonTipo :: Pokemon -> TipoDePokemon --función tp-1
 --dado un pokemon devuelve su tipo
 pokemonTipo (PM tp _) = tp
 
--- -----------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 cuantosDeTipo_De_LeGananATodosLosDe_ :: TipoDePokemon -> Entrenador -> Entrenador -> Int
 {-Dados dos entrenadores, indica la cantidad de Pokemon de cierto tipo, que le ganarían
@@ -326,7 +346,9 @@ tipoVenceA Fuego Planta = True
 tipoVenceA Planta Agua = True
 tipoVenceA _ _ = False
 
--- ------------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 esMaestroPokemon :: Entrenador -> Bool
 --Dado un entrenador, devuelve True si posee al menos un Pokémon de cada tipo posible.
@@ -341,6 +363,7 @@ hayPokemonTipo tp (pm:pms) = sonTiposIguales tp (pokemonTipo pm) || hayPokemonTi
 
 
 -- ////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 --3. 
 
@@ -373,6 +396,8 @@ elon  = Developer  Junior     paginaWeb
 
 empresa :: Empresa
 empresa = ConsEmpresa [bill, steve, mark, jeff, elon]
+
+-- =============================================================================================
 
 --Definir las siguientes funciones sobre el tipo Empresa:
 
@@ -419,7 +444,9 @@ nombreDelproyecto :: Proyecto -> String
 --Devuelve el nombre del Proyecto dado.
 nombreDelproyecto (ConsProyecto n) = n
 
--- -------------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 losDevSenior :: Empresa -> [Proyecto] -> Int
 --Dada una empresa indica la cantidad de desarrolladores senior que posee, que pertecen además a los proyectos dados por parámetro.
@@ -458,7 +485,9 @@ trabajaEnProyecto :: Rol -> Proyecto -> Bool
 trabajaEnProyecto (Developer _ p) py = sonMismoProyecto p py
 trabajaEnProyecto (Management _ p) py = sonMismoProyecto p py
  
--- -------------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 cantQueTrabajanEn :: [Proyecto] -> Empresa -> Int
 --Indica la cantidad de empleados que trabajan en alguno de los proyectos dados.
@@ -472,7 +501,9 @@ empleadosDeEmpresaQueTrabajanEn _ [] = []
 empleadosDeEmpresaQueTrabajanEn (r:rs) pys = agregarSi r (trabajaEnAlgunProyecto r pys) 
                                              ++ empleadosDeEmpresaQueTrabajanEn rs pys
 
--- ------------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 --Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas.
