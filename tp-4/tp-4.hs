@@ -514,10 +514,19 @@ losQueExploraronL _ (Cria _)                = []
 
 
 --5. 
---exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
 {-Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio
 y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron
 dicho territorio. Los territorios no deben repetirse.-}
+exploradoresPorTerritorio (M lobo) = exploradoresPorTerritorioL
+
+exploradoresPorTerritorioL :: Lobo -> [(Territorio, [Nombre])]
+exploradoresPorTerritorioL (Cazador _ _ l1 l2 l3) = exploradoresPorTerritorioL l1 ++ exploradoresPorTerritorioL
+exploradoresPorTerritorioL (Explorador n ts l1 l2) = agregarExplorador n ()
+
+agregarNombrePorTerritorios :: Lobo -> [Territorio] -> [(Territorio, [Nombre])]
+agregarNombrePorTerritorios l [] = []
+agregarNombrePorTerritorios l (t:ts) = (t, singularSi (nombreLobo l) (pertenece t (territoriosExploradosPorLobo l)))
 
 
 
