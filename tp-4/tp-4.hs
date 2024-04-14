@@ -437,7 +437,11 @@ data Manada = M Lobo
 
 manada :: Manada 
 manada = M (Cazador "Hunter" ["conejo","ciervo","liebre"] 
-            (Explorador "e1" ["rio", "bosque"] (Cria "c2") (Cria "c3"))
+            --(Explorador "e1" ["rio", "bosque", "pradera"] (Cria "c2") (Cria "c3"))
+            (Explorador "e1" ["rio", "bosque", "pradera"]  
+                (Cazador "Jack" ["conejo","ciervo","liebre"] (Cria "c3") (Cria "c3") 
+                    (Cazador "Pedro" ["conejo","ciervo","liebre"] (Cria "c3") (Cria "c3") (Cria "c3"))) 
+                (Cria "c3"))
             (Explorador "e2" ["pradera", "laguna"] (Cria "c3") (Cria "c4"))
             (Cria "c1"))
 
@@ -518,20 +522,54 @@ exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
 {-Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio
 y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron
 dicho territorio. Los territorios no deben repetirse.-}
-exploradoresPorTerritorio (M lobo) = exploradoresPorTerritorioL
+exploradoresPorTerritorio m = exploradoresPorTerritorioM (terrririosDeM m) m
 
-exploradoresPorTerritorioL :: Lobo -> [(Territorio, [Nombre])]
-exploradoresPorTerritorioL (Cazador _ _ l1 l2 l3) = exploradoresPorTerritorioL l1 ++ exploradoresPorTerritorioL
-exploradoresPorTerritorioL (Explorador n ts l1 l2) = agregarExplorador n ()
+exploradoresPorTerritorioM :: [Territorio] -> Manada -> [(Territorio, [Nombre])]
+exploradoresPorTerritorioM ts (M l) = exploradoresPorTerritorioL ts l
 
-agregarNombrePorTerritorios :: Lobo -> [Territorio] -> [(Territorio, [Nombre])]
-agregarNombrePorTerritorios l [] = []
-agregarNombrePorTerritorios l (t:ts) = (t, singularSi (nombreLobo l) (pertenece t (territoriosExploradosPorLobo l)))
+exploradoresPorTerritorioL :: [Territorio] -> Lobo -> [(Territorio, [Nombre])]
+exploradoresPorTerritorioL [] _ = []
+exploradoresPorTerritorioL (t:ts) l = (t, nombresQueExplotaron t l) : exploradoresPorTerritorioL ts l
+
+nombresQueExplotaron :: Territorio -> Lobo -> [Nombre]
+nombresQueExplotaron _ (Cria _) = []
+nombresQueExplotaron t (Explorador n ts l1 l2) = singularSi n (pertenece t ts) ++ nombresQueExplotaron t l1 ++ nombresQueExplotaron t l2
+nombresQueExplotaron t (Cazador _ _ l1 l2 l3) = nombresQueExplotaron t l1 ++ nombresQueExplotaron t l2 ++ nombresQueExplotaron t l3
+
+terrririosDeM :: Manada -> [Territorio] 
+terrririosDeM (M l) = sinRepetidos (terrririosDeL l)
+
+terrririosDeL :: Lobo -> [Territorio]
+terrririosDeL (Cria _) = []
+terrririosDeL (Explorador _ ts l1 l2) = ts ++ terrririosDeL l1 ++ terrririosDeL l2
+terrririosDeL (Cazador _ _ l1 l2 l3)  = terrririosDeL l1 ++ terrririosDeL l2
 
 
+-- =============================================================================================
 
-
-{-6. superioresDelCazador :: Nombre -> Manada -> [Nombre]
-Propósito: dado un nombre de cazador y una manada, indica el nombre de todos los
+--6. 
+superioresDelCazador :: Nombre -> Manada -> [Nombre]
+{-Propósito: dado un nombre de cazador y una manada, indica el nombre de todos los
 cazadores que tienen como subordinado al cazador dado (directa o indirectamente).
 Precondición: hay un cazador con dicho nombre y es único.-}
+superioresDelCazador n (M l) = superioresDelCazadorL n l 
+
+
+superioresDelCazadorL :: Nombre -> Lobo -> [Nombre]
+-- PRECONDICION: Existe un unico cazador con el nombre dado 
+superioresDelCazadorL n (Cria _)                =  error "No esta el lobo"
+superioresDelCazadorL n (Explorador n1 _ l1 l2) = (superioresDelCazadorL n (lobosPorDebajo n l1 l2))                                                       
+superioresDelCazadorL n (Cazador n1 _ l1 l2 l3) =  if n == n1 
+                                                   then [] 
+                                                   else n1 : (superioresDelCazadorL n (lobosPorDebajo n l1 (lobosPorDebajo n l2 l3)))
+                                                         
+                                                         
+lobosPorDebajo :: Nombre -> Lobo -> Lobo -> Lobo 
+lobosPorDebajo n l1 l2 = if seEncuentraLobo n l1 
+                         then l1 
+                         else l2
+
+seEncuentraLobo :: Nombre -> Lobo -> Bool 
+seEncuentraLobo n1 (Cria n)                = n1 == n
+seEncuentraLobo n1 (Explorador n ts l1 l2) = n1 == n || seEncuentraLobo n1 l1 || seEncuentraLobo n1 l2 
+seEncuentraLobo n1 (Cazador n ps l1 l2 l3) = n1 == n || seEncuentraLobo n1 l1 || seEncuentraLobo n1 l2 || seEncuentraLobo n1 l3
