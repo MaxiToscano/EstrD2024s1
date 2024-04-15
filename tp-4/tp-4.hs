@@ -507,11 +507,11 @@ losQueExploraron :: Territorio -> Manada -> [Nombre]
 losQueExploraron t (M lobo) = losQueExploraronL t lobo 
 
 losQueExploraronL :: Territorio -> Lobo -> [Nombre]
+losQueExploraronL _ (Cria _)                = []
 losQueExploraronL t (Cazador _ _ l1 l2 l3)  = losQueExploraronL t l1 ++ losQueExploraronL t l2 ++ losQueExploraronL t l3
 losQueExploraronL t (Explorador n ts l1 l2) = singularSi n (pertenece t ts) 
                                             ++ losQueExploraronL t l1 
                                             ++ losQueExploraronL t l2 
-losQueExploraronL _ (Cria _)                = []
 
 
 -- =============================================================================================
@@ -529,12 +529,7 @@ exploradoresPorTerritorioM ts (M l) = exploradoresPorTerritorioL ts l
 
 exploradoresPorTerritorioL :: [Territorio] -> Lobo -> [(Territorio, [Nombre])]
 exploradoresPorTerritorioL [] _ = []
-exploradoresPorTerritorioL (t:ts) l = (t, nombresQueExplotaron t l) : exploradoresPorTerritorioL ts l
-
-nombresQueExplotaron :: Territorio -> Lobo -> [Nombre]
-nombresQueExplotaron _ (Cria _) = []
-nombresQueExplotaron t (Explorador n ts l1 l2) = singularSi n (pertenece t ts) ++ nombresQueExplotaron t l1 ++ nombresQueExplotaron t l2
-nombresQueExplotaron t (Cazador _ _ l1 l2 l3) = nombresQueExplotaron t l1 ++ nombresQueExplotaron t l2 ++ nombresQueExplotaron t l3
+exploradoresPorTerritorioL (t:ts) l = (t, losQueExploraronL t l) : exploradoresPorTerritorioL ts l
 
 terrririosDeM :: Manada -> [Territorio] 
 terrririosDeM (M l) = sinRepetidos (terrririosDeL l)
@@ -556,13 +551,13 @@ superioresDelCazador n (M l) = superioresDelCazadorL n l
 
 
 superioresDelCazadorL :: Nombre -> Lobo -> [Nombre]
--- PRECONDICION: Existe un unico cazador con el nombre dado 
-superioresDelCazadorL n (Cria _)                =  error "No esta el lobo"
+--PRECOND: hay un cazador con dicho nombre y es único.
+superioresDelCazadorL n (Cria _)                =  error "No existe el cazador"    
 superioresDelCazadorL n (Explorador n1 _ l1 l2) = (superioresDelCazadorL n (lobosPorDebajo n l1 l2))                                                       
 superioresDelCazadorL n (Cazador n1 _ l1 l2 l3) =  if n == n1 
                                                    then [] 
                                                    else n1 : (superioresDelCazadorL n (lobosPorDebajo n l1 (lobosPorDebajo n l2 l3)))
-                                                         
+                                                    
                                                          
 lobosPorDebajo :: Nombre -> Lobo -> Lobo -> Lobo 
 lobosPorDebajo n l1 l2 = if seEncuentraLobo n l1 
@@ -570,6 +565,6 @@ lobosPorDebajo n l1 l2 = if seEncuentraLobo n l1
                          else l2
 
 seEncuentraLobo :: Nombre -> Lobo -> Bool 
-seEncuentraLobo n1 (Cria n)                = n1 == n
+seEncuentraLobo n1 (Cria n) = n1 == n
 seEncuentraLobo n1 (Explorador n ts l1 l2) = n1 == n || seEncuentraLobo n1 l1 || seEncuentraLobo n1 l2 
 seEncuentraLobo n1 (Cazador n ps l1 l2 l3) = n1 == n || seEncuentraLobo n1 l1 || seEncuentraLobo n1 l2 || seEncuentraLobo n1 l3
