@@ -560,11 +560,11 @@ superioresDelCazadorL n (Cazador n1 _ l1 l2 l3) =  if n == n1
                                                     
                                                          
 lobosPorDebajo :: Nombre -> Lobo -> Lobo -> Lobo 
-lobosPorDebajo n l1 l2 = if seEncuentraLobo n l1 
+lobosPorDebajo n l1 l2 = if estaLoboEn n l1 
                          then l1 
                          else l2
 
-seEncuentraLobo :: Nombre -> Lobo -> Bool 
-seEncuentraLobo n1 (Cria n) = n1 == n
-seEncuentraLobo n1 (Explorador n ts l1 l2) = n1 == n || seEncuentraLobo n1 l1 || seEncuentraLobo n1 l2 
-seEncuentraLobo n1 (Cazador n ps l1 l2 l3) = n1 == n || seEncuentraLobo n1 l1 || seEncuentraLobo n1 l2 || seEncuentraLobo n1 l3
+estaLoboEn :: Nombre -> Lobo -> Bool 
+estaLoboEn n1 (Cria n) = n1 == n
+estaLoboEn n1 (Explorador n ts l1 l2) = n1 == n || estaLoboEn n1 l1 || estaLoboEn n1 l2 
+estaLoboEn n1 (Cazador n ps l1 l2 l3) = n1 == n || estaLoboEn n1 l1 || estaLoboEn n1 l2 || estaLoboEn n1 l3
