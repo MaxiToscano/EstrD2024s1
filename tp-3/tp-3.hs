@@ -38,7 +38,9 @@ unoSi :: Bool -> Int
 unoSi True = 1
 unoSi _ = 0
 
--- ----------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 poner :: Color -> Celda -> Celda
 --Dado un color y una celda, agrega una bolita de dicho color a la celda.
@@ -59,7 +61,9 @@ ponerN :: Int -> Color -> Celda -> Celda
 ponerN 0 _ ce  = ce
 ponerN n c ce = poner c (ponerN (n-1) c ce)
 
+
 -- ////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 --PUNTO 1.2: Camino hacia el tesoro
 
@@ -99,7 +103,9 @@ esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True
 esTesoro _      = False
 
--- ---------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 pasosHastaTesoro :: Camino -> Int
 {-Indica la cantidad de pasos que hay que recorrer hasta llegar al primer cofre con un tesoro.
@@ -111,7 +117,9 @@ pasosHastaTesoro (Cofre obs c)  = if hayTesoroEnObjetos obs
                                    else 1 + pasosHastaTesoro c
 pasosHastaTesoro (Nada c)       = 1 + pasosHastaTesoro c
 
-----------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 hayTesoroEn :: Int -> Camino -> Bool 
 {-Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
@@ -142,7 +150,9 @@ caminoInterior Fin = error "No puede ser Fin"
 caminoInterior (Nada c) = c
 caminoInterior (Cofre _ c) = c
 
-----------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 alMenosNTesoros :: Int -> Camino -> Bool
 --Indica si hay al menos n tesoros en el camino.
@@ -160,7 +170,9 @@ cuantosSonTesoros :: [Objeto] -> Int
 cuantosSonTesoros [] = 0
 cuantosSonTesoros (ob:obs) = unoSi (esTesoro ob) + cuantosSonTesoros obs
 
------------------------------------------------------------------------------------------------
+
+-- =============================================================================================
+
 
 --(desafío) 
 cantTesorosEntre :: Int -> Int -> Camino -> Int
@@ -187,6 +199,7 @@ caminoHasta n (Cofre obs c) = Cofre obs (caminoHasta (n-1) c)
 
 -- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 --PUNTO 2. Tipos arbóreos
 
 
@@ -201,11 +214,15 @@ treeN = NodeT 2 (NodeT 2 (NodeT 3 EmptyT EmptyT) EmptyT) (NodeT 5 (NodeT 4 (Node
 
 --defina las siguientes funciones utilizando recursión estructural según corresponda:
 
+
 --1. 
 sumarT :: Tree Int -> Int
 --Dado un árbol binario de enteros devuelve la suma entre sus elementos.
 sumarT EmptyT = 0
 sumarT (NodeT n t1 t2) = n + sumarT t1 + sumarT t2
+
+
+-- =============================================================================================
 
 
 --2. 
@@ -215,11 +232,17 @@ sizeT EmptyT = 0
 sizeT (NodeT _ t1 t2) = 1 + sizeT t1 + sizeT t2
 
 
+-- =============================================================================================
+
+
 --3. 
 mapDobleT :: Tree Int -> Tree Int
 --Dado un árbol de enteros devuelve un árbol con el doble de cada número.
 mapDobleT EmptyT = EmptyT
 mapDobleT (NodeT n t1 t2) = NodeT (n*2) (mapDobleT t1) (mapDobleT t2)
+
+
+-- =============================================================================================
 
 
 --4. 
@@ -229,11 +252,17 @@ perteneceT _ EmptyT = False
 perteneceT e (NodeT e1 t1 t2) = (e==e1) || perteneceT e t1 || perteneceT e t2
 
 
+-- =============================================================================================
+
+
 --5. 
 aparicionesT :: Eq a => a -> Tree a -> Int
 --Dados un elemento e y un árbol binario devuelve la cantidad de elementos del árbol que son iguales a e.
 aparicionesT _ EmptyT = 0
 aparicionesT e (NodeT e1 t1 t2) = unoSi (e==e1) + aparicionesT e t1 + aparicionesT e t2
+
+
+-- =============================================================================================
 
 
 --6. 
@@ -242,6 +271,9 @@ leaves :: Tree a -> [a]
 leaves EmptyT = []
 leaves (NodeT e EmptyT EmptyT) = [e]
 leaves (NodeT e t1 t2) = leaves t1 ++ leaves t2
+
+
+-- =============================================================================================
 
 
 --7. 
@@ -253,11 +285,17 @@ heightT EmptyT = 0
 heightT (NodeT e t1 t2) = 1 + max (heightT t1) (heightT t2)
 
 
+-- =============================================================================================
+
+
 --8. 
 mirrorT :: Tree a -> Tree a
 --Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho en cada nodo del árbol.
 mirrorT EmptyT = EmptyT
 mirrorT (NodeT e t1 t2) = NodeT e (mirrorT t2) (mirrorT t1)
+
+
+-- =============================================================================================
 
 
 --9. 
@@ -266,6 +304,9 @@ toList :: Tree a -> [a]
 --Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz y luego los elementos del hijo derecho.
 toList EmptyT = []
 toList (NodeT e t1 t2) = toList t1 ++ [e] ++ toList t2
+
+
+-- =============================================================================================
 
 
 --10. 
@@ -279,6 +320,9 @@ levelN 0 (NodeT e _ _) = [e]
 levelN n (NodeT e t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
 
 
+-- =============================================================================================
+
+
 --11. 
 listPerLevel :: Tree a -> [[a]]
 --Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de dicho árbol.
@@ -289,6 +333,9 @@ juntarNiveles :: [[a]] -> [[a]] -> [[a]]
 juntarNiveles [] yss = yss
 juntarNiveles xss [] = xss
 juntarNiveles (xs:xss) (ys:yss) = (xs ++ ys) : juntarNiveles xss yss
+
+
+-- =============================================================================================
 
 
 --12. 
@@ -311,6 +358,8 @@ ramaMasLarga' (NodeT e t1 t2) = if sizeT t1 > sizeT t2
                                 else e : ramaMasLarga t2
 
 
+-- =============================================================================================
+
 
 --13. 
 todosLosCaminos :: Tree a -> [[a]]
@@ -327,7 +376,9 @@ consACada x (xs:xss) = (x:xs) : consACada x xss
 
 = [ [1], [1,2], [1,2,3], [1,4], [1,4,5] ]-}
 
+
 -- ////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 --Punto 2.2: Expresiones Aritméticas
 
@@ -341,6 +392,7 @@ expa1 = Sum (Prod (Neg (Valor (-4))) (Valor 0)) (Valor 6)
 
 --Implementar las siguientes funciones utilizando el esquema de recursión estructural sobre Exp:
 
+
 --1. 
 eval :: ExpA -> Int
 --Dada una expresión aritmética devuelve el resultado evaluarla.
@@ -348,6 +400,9 @@ eval (Valor n) = n
 eval (Sum e1 e2) = eval e1 + eval e2
 eval (Prod e1 e2) = eval e1 * eval e2    
 eval (Neg e) = eval e * (-1)
+
+
+-- =============================================================================================
 
 
 --2. 
@@ -358,10 +413,12 @@ simplificar (Sum e1 e2) = sumSimplificada (simplificar e1) (simplificar e2)
 simplificar (Prod e1 e2) = prodSimplificado (simplificar e1) (simplificar e2)
 simplificar (Neg e) = negSimplificado (simplificar e)
 
+
 sumSimplificada :: ExpA -> ExpA -> ExpA
 sumSimplificada (Valor 0) e2 = e2
 sumSimplificada e1 (Valor 0) = e1  
 sumSimplificada e1 e2        = Sum e1 e2
+
 
 prodSimplificado :: ExpA -> ExpA -> ExpA
 prodSimplificado (Valor 0) _ = Valor 0
@@ -369,6 +426,7 @@ prodSimplificado _ (Valor 0) = Valor 0
 prodSimplificado (Valor 1) e2 = e2
 prodSimplificado e1 (Valor 1) = e1
 prodSimplificado e1 e2       = Prod e1 e2
+
 
 negSimplificado :: ExpA -> ExpA
 negSimplificado (Neg e) = e
