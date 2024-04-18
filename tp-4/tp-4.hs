@@ -553,18 +553,18 @@ superioresDelCazador n (M l) = superioresDelCazadorL n l
 superioresDelCazadorL :: Nombre -> Lobo -> [Nombre]
 --PRECOND: hay un cazador con dicho nombre y es único.
 superioresDelCazadorL n (Cria _)                =  error "No existe el cazador"    
-superioresDelCazadorL n (Explorador n1 _ l1 l2) = (superioresDelCazadorL n (lobosPorDebajo n l1 l2))                                                       
-superioresDelCazadorL n (Cazador n1 _ l1 l2 l3) =  if n == n1 
+superioresDelCazadorL n (Explorador nl _ l1 l2) = (superioresDelCazadorL n (lobosInferiores n l1 l2))                                                       
+superioresDelCazadorL n (Cazador nl _ l1 l2 l3) =  if n == nl 
                                                    then [] 
-                                                   else n1 : (superioresDelCazadorL n (lobosPorDebajo n l1 (lobosPorDebajo n l2 l3)))
+                                                   else nl : (superioresDelCazadorL n (lobosInferiores n l1 (lobosInferiores n l2 l3)))
                                                     
                                                          
-lobosPorDebajo :: Nombre -> Lobo -> Lobo -> Lobo 
-lobosPorDebajo n l1 l2 = if estaLoboEn n l1 
+lobosInferiores :: Nombre -> Lobo -> Lobo -> Lobo 
+lobosInferiores n l1 l2 = if estaLoboEnL n l1 
                          then l1 
                          else l2
 
-estaLoboEn :: Nombre -> Lobo -> Bool 
-estaLoboEn n1 (Cria n) = n1 == n
-estaLoboEn n1 (Explorador n ts l1 l2) = n1 == n || estaLoboEn n1 l1 || estaLoboEn n1 l2 
-estaLoboEn n1 (Cazador n ps l1 l2 l3) = n1 == n || estaLoboEn n1 l1 || estaLoboEn n1 l2 || estaLoboEn n1 l3
+estaLoboEnL :: Nombre -> Lobo -> Bool 
+estaLoboEnL n (Cria nl) = n == nl
+estaLoboEnL n (Explorador nl _ l1 l2) = n == nl || estaLoboEnL n l1 || estaLoboEnL n l2 
+estaLoboEnL n (Cazador nl _ l1 l2 l3) = n == nl || estaLoboEnL n l1 || estaLoboEnL n l2 || estaLoboEnL n l3
