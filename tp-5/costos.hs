@@ -8,30 +8,30 @@
 --Especficar el costo operacional de las siguientes funciones:
 
 
---Costo Constante: O(1)
+--Costo Constante: O(1) porque solo opera sobre el primer elemento de la lista.
 head' :: [a] -> a  
 head' (x:xs) = x
 
 
---Costo Constante: O(1) 
+--Costo Constante: O(1) porque solo utiliza la operación constante '+'
 sumar :: Int -> Int  
 sumar x = x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1
 
 
---Costo Lineal: O(n) -> n = el num dado.
+--Costo Lineal: O(n) -> n = el num dado. Porque utiliza la operacion constante '*' en la recursión sobre n
 factorial :: Int -> Int 
 factorial 0 = 1
 factorial n = n * factorial (n-1)
 
 
---Costo Lineal: O(n) -> porque hace una operación de costo constante a cada elemento de la lsita dada.
+--Costo Lineal: O(n) -> porque hace una operación de costo constante '+' por cada elemento de la lsita dada.
 --n = la longitud de  la lista.
 longitud :: [a] -> Int 
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
 
---Costo Cuadrático: O(n^2) -> porque utiliza una función de costo lineal por cada num de la lista dada.
+--Costo Cuadrático: O(n^2) -> porque utiliza una función de costo lineal (factorial) por cada num de la lista dada.
 --n = longitud de la lista.
 factoriales :: [Int] -> [Int] 
 factoriales [] = []
@@ -103,3 +103,10 @@ ordenar :: Ord a => [a] -> [a]
 ordenar [] = []
 orderar xs = let m = minimo xs
              in m : ordenar (sacar m xs)
+
+
+-- //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
