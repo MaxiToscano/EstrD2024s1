@@ -27,7 +27,7 @@ isEmptyQ :: Queue a -> Bool --O(1)
 --Dada una cola indica si la cola está vacía.
 isEmptyQ (Q xs) = null xs
 
-enqueue :: a -> Queue a -> Queue a --O(1) porque append solo agrega un elemento
+enqueue :: a -> Queue a -> Queue a --O(n) por el costo lineal de ++
 --Dados un elemento y una cola, agrega ese elemento a la cola.
 enqueue x (Q xs) = Q (xs ++ [x])
 

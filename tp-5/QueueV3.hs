@@ -14,8 +14,8 @@ module QueueV3
 
 where
 
-data Queue = Q [a] [a]
---             fs  bs
+data Queue a = Q [a] [a]
+--               fs  bs
 
 {-
 Invariante de representación: 
@@ -35,16 +35,27 @@ isEmptyQ :: Queue a -> Bool --O(1)
 --Dada una cola indica si la cola está vacía.
 isEmptyQ (Q fs bs) = null fs
 
-enqueue :: a -> Queue a -> Queue a 
+enqueue :: a -> Queue a -> Queue a  --O(1)
 --Dados un elemento y una cola, agrega ese elemento a la cola.
-enqueue x (Q fs bs) = 
+enqueue x (Q fs bs) = if null fs 
+                      then Q (x:fs) bs
+                      else Q fs (x:bs)
 
-firstQ :: Queue a -> a 
+
+firstQ :: Queue a -> a --O(1)
 --Dada una cola devuelve el primer elemento de la cola.
 --PRECOND: la cola no es Empty
-firstQ (Q fs bs) = 
+firstQ (Q fs bs) = head fs
 
-dequeue :: Queue a -> Queue a 
+
+dequeue :: Queue a -> Queue a --O(1) amortizado porque en el caso en que usa reverse es de costo O(n) pero solo ocurre cuando tail fs es null.
 --Dada una cola la devuelve sin su primer elemento.
 --PRECOND: la cola no es Empty
-dequeue (Q fs bs) = 
+dequeue (Q fs bs) = if null (tail fs) --O(1)
+                    then Q (tail (reverse bs)) [] --O(n)
+                    else Q (tail fs) bs --O(1)
+
+
+{-La ventaja de la Queue con dos lista es que de esta forma se reduce el costo ya que dequeue es
+  de costo O(n) en un unico caso. Mientras que la Queue con una lista tenia una operación de costo lineal fijo.
+-}
