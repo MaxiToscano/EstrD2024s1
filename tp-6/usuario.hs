@@ -26,32 +26,77 @@ ordenarPQ pq = findMinPQ pq : ordenarPQ (deleteMinPQ pq)
 --1. 
 valuesM :: Eq k => Map k v -> [Maybe v]
 --Propósito: obtiene los valores asociados a cada clave del map.
+valuesM m = valoresK (keys M) m
 
+valoresK :: [k] -> Map k v -> [Maybe v]
+valoresK [] _ = []
+valoresK (k:ks) m = lookupM k m : valoresK ks m
+
+-- =========================================================================================  
 
 --2. 
 todasAsociadas :: Eq k => [k] -> Map k v -> Bool
 --Propósito: indica si en el map se encuentran todas las claves dadas.
+todasAsociadas [] _ = False
+todasAsociadas (k:ks) m = elem k (keys m) && todasAsociadas ks m
 
+
+-- =========================================================================================  
 
 --3. 
 listToMap :: Eq k => [(k, v)] -> Map k v
 --Propósito: convierte una lista de pares clave valor en un map.
+listToMap [] = EmptyM
+listToMap ((k,v):kvs) = assocM k v (listToMap kvs)
 
+-- =========================================================================================  
 
 --4. 
 mapToList :: Eq k => Map k v -> [(k, v)]
 --Propósito: convierte un map en una lista de pares clave valor.
+mapToList m = mapaALista (keys m) m
 
+mapaALista :: [k] -> Map v -> [(k, v)]
+mapaALista [] _ = []
+mapaALista (k:ks) m = (k, fromJust (lookupM k m)) : mapaALista ks m
+ 
+fromJust :: Maybe a -> a -- O(1)
+-- PRECOND: No puede ser Nothing
+fromJust (Just x) = x
 
---5. 
+-- =========================================================================================  
+    
+--5. COMPLETAR
 agruparEq :: Eq k => [(k, v)] -> Map k [v]
 --Propósito: dada una lista de pares clave valor, agrupa los valores de los pares que compartan la misma clave.
+agruparEq []        = EmptyM
+agruparEq (kv:kvs)  = asociarConLista kv (agruparEq kvs)
 
+asociarConLista :: Eq k => (k,v) -> Map k [v] -> Map k [v] 
+asociarConLista (k,v) map = if esValor (lookupM k map) 
+                            then assocM k (v:(valorDe k map)) map
+                            else assocM k [v] map 
+
+esValor :: Maybe v -> Bool
+esValor Nothing  = False 
+esValor (Just x) = True
+
+-- =========================================================================================  
 
 --6. 
 incrementar :: Eq k => [k] -> Map k Int -> Map k Int
 --Propósito: dada una lista de claves de tipo k y un map que va de k a Int, le suma uno a cada número asociado con dichas claves.
+incrementar ks m = incrementarK ks (keys m) m
 
+
+incrementarK :: Eq k => [k] -> [k] -> Map k Int -> Map k Int
+incrementarK [] _ m            = m
+incrementarK _ [] m = m        = m
+incrementarK (k:ks) (k':ks') m = if k==k'
+                                 then assocM k' (fromJust (lookupM k' m + 1)) (incrementarK ks ks' m)
+                                 else incrementarK ks ks' m
+
+-- =========================================================================================
 
 --7. 
 mergeMaps:: Eq k => Map k v -> Map k v -> Map k v
