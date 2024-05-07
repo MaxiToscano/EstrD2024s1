@@ -1,13 +1,19 @@
 --2. Map (diccionario)
 
---Ejercicio 3
+--Ejercicio 4
+{-Implemente las siguientes variantes del tipo Map, indicando los costos obtenidos para cada operación, 
+  justificando las respuestas:
 
-module Map
-    (Map, emptyM, assocM, lookupM, deleteM, domM) 
+1. Como una lista de pares-clave valor sin claves repetidas.-}
+
+module MapV1
+    (Map, emptyM, assocM, lookupM, deleteM, keys) 
   where
 
 data Map k v = M [(k,v)]
-  {- INV.REP.: en M kvs, no hay claves repetidas en kvs -}
+  {- INV.REP.: 
+      en M kvs, no hay claves repetidas en kvs 
+  -}
 
 --La interfaz del tipo abstracto Map es la siguiente:
 
@@ -42,15 +48,15 @@ buscar k ((k',v):kvs) = if k==k'
 
 -- ==============================================================================================
 
-deleteM :: Eq k => k -> Map k v -> Map k v --O(n) por el costo de borrar.
+deleteM :: Eq k => k -> Map k v -> Map k v --O(n) por el costo de borrarK
 --Propósito: borra una asociación dada una clave.
-deleteM k (M kvs) = M (borrarK k kvs) 
+deleteM k (M kvs) = M (borrarK k kvs)
 
-borrarK :: Eq => k -> [(k,v)] -> [(k,v)] --O(n) porque hace recursión sobre la lista, siendo n la longitud de la lista.
-borrarK _ [] = []
-borrarK k ((k',v) kvs) = if k == k' 
-                         then kvs 
-                         else (k',v) : borrarK k kvs
+borrarK :: Eq k => k -> [(k, v)] -> [(k, v)] --O(n) porque hace recursión sobre la lista, siendo n la longitud de la lista.
+borrarK k []             = []
+borrarK k ((k', v'):kvs) = if k == k'
+                           then borrarK k kvs
+                           else (k', v') : borrarK k kvs
 
 -- ==============================================================================================
 
@@ -58,6 +64,6 @@ keys :: Map k v -> [k] --O(n) por el costo de calvesM.
 --Propósito: devuelve las claves del map.
 keys (M kvs) = clavesM kvs
 
-clavesM :: Eq => [(k,v)] -> [k] --O(n) porque hace recursión sobre la lista, siendo n la longitud de la lista.
+clavesM :: [(k,v)] -> [k] --O(n) porque hace recursión sobre la lista, siendo n la longitud de la lista.
 clavesM [] = []
 clavesM ((k,v):kvs) = k : clavesM kvs
